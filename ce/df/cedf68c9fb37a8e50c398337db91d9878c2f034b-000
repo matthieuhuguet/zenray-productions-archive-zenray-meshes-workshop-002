@@ -1,0 +1,1245 @@
+{
+ "_date": "25 October 2026",
+ "_note": "RowLoft.py : samples per metre, fair rows (P-spline knot spacing, penalty, end weight), arch rows skip the stations inside the arches",
+ "n_per_m": 80,
+ "fair": 1,
+ "knot_m": 0.9,
+ "lam": 0.01,
+ "end_weight": 1.0,
+ "arch_rows": [
+  "fender_inner",
+  "sill",
+  "door_low"
+ ],
+ "arch_pad": 1.08,
+ "arch_skip": 1.0,
+ "_note_fair0": "25 October 2026: the cage is faired upstream (cage_fair), the loft only interpolates",
+ "groove_rows": {
+  "belt": 0.008,
+  "door_low": 0.008
+ },
+ "_note_groove": "25 October 2026: 8 mm kept, 15 mm no gain",
+ "crown_n": 6,
+ "crown_p": 3.0,
+ "breaks": {
+  "roof_centre": [
+   1.56,
+   -1.99
+  ],
+  "roof_edge": [
+   1.56,
+   -1.99
+  ],
+  "glass_base": [
+   1.56,
+   -1.99
+  ]
+ },
+ "_note_clean": "25 October 2026: clean curves, one knot every 0.8 m, C0 corners only at the windshield base (1.56) and rear glass base (-1.77)",
+ "order_rows": 1,
+ "row_gap_m": 0.003,
+ "arch_cut": 1,
+ "arch_pad_cut": 1.14,
+ "arch_x0": 0.4,
+ "fit_skip_ends": 1,
+ "min_y": 0.1,
+ "_note_arch_rows": "25 October 2026: floor_edge is flat across the arches, skipping its arch stations made the spline dive to -0.05 m",
+ "wheel_cover": {
+  "on": 0,
+  "cover_m": 0.015,
+  "ramp_m": 0.15,
+  "soft_m": 0.006,
+  "rows": {
+   "sill": {
+    "extra_rear_m": 0.08,
+    "extra_front_m": 0.0
+   },
+   "door_low": {
+    "extra_rear_m": 0.08,
+    "extra_front_m": 0.0
+   },
+   "belt": {
+    "rear_only": 1,
+    "face_dx": -0.075,
+    "window": "z",
+    "extra_m": 0.0,
+    "extra_rear_m": 0.1,
+    "ramp_m": 0.6
+   },
+   "belt_top": {
+    "rear_only": 1,
+    "face_dx": -0.13,
+    "window": "z",
+    "extra_m": 0.0,
+    "extra_rear_m": 0.1,
+    "ramp_m": 0.6
+   }
+  },
+  "_note": "26 October 2026: the body covers the tyres in plan ; rows framing the arches reach tyre face + cover_m over each tyre (plus extra per row and end), C2 plateau with ramp_m ramps, softplus blend",
+  "_note_belt": "26 October 2026: the belt is the arch TOP edge only near the axle ; pushed only over zc +- 0.19 m (it widened the rear shoulder at y 0.99, blue upper corners in the back view)",
+  "window": "radial",
+  "flare_m": 0.12,
+  "front_fade_z": [
+   1.78,
+   1.92
+  ],
+  "rear_fade_z": [
+   -2.1,
+   -2.0
+  ],
+  "_note_belt_v205": "26 October 2026: belt pushed over the REAR wheel only to tyre face - 0.055 (1.057), z window from the tail to 0.25 m ahead of the arch : back view W(0.95) 1.059 and H(1.05) 0.965 on the sheet, model 0.998 and 0.878 ; the top view showed the haunch as a ledge under the shoulder (dark S band)",
+  "_note_belt_v206": "26 October 2026: belt face_dx -0.055 -> -0.075 (front view W(0.9..0.95) was 3.5 to 4.6 cm wide, back 2 cm narrow : split) ; belt_top pushed to 0.982 over the rear wheel (both end views put the outline at x 1.0 for y 1.0, model 0.92 without the mirrors)",
+  "_note_ramp_v208": "26 October 2026: belt and belt_top rear push : extra_m 0.25 -> 0, ramp_m 0.6 (the overhang belt_top - belt jumped from -0.005 to -0.040 between z -0.8 and -1.0, a kink in the shoulder seen as an S band from above)"
+ },
+ "side_subdiv": 8,
+ "side_rows": [
+  "floor_edge",
+  "fender_inner",
+  "sill",
+  "door_low",
+  "belt",
+  "belt_top",
+  "glass_base",
+  "roof_edge"
+ ],
+ "_note_side_subdiv": "26 October 2026: side bands split in side_subdiv straight strips so the arch cut follows the circle",
+ "haunch": {
+  "on": 0,
+  "between": [
+   "door_low",
+   "belt"
+  ],
+  "u": 0.5,
+  "cover_m": 0.015,
+  "ramp_m": 0.15,
+  "soft_m": 0.006,
+  "extra_rear_m": 0.08,
+  "extra_front_m": 0.0,
+  "_note": "26 October 2026: haunch column at mid band door_low / belt pushed over the tyres (back view 1.14 m at y 0.8), neighbours re-interpolated",
+  "window": "radial",
+  "flare_m": 0.12,
+  "front_fade_z": [
+   1.78,
+   1.92
+  ],
+  "rear_fade_z": [
+   -2.1,
+   -2.0
+  ]
+ },
+ "_note_radial": "26 October 2026: wheel cover and haunch pushed in a flare ring around each arch (radius + flare_m, ramp_m), no fins at the arch edges",
+ "arch_relax_m": 0.08,
+ "arch_relax_iter": 12,
+ "door_cut": {
+  "on": 1,
+  "top": [
+   -0.686,
+   0.853
+  ],
+  "bottom": [
+   -0.505,
+   0.36
+  ],
+  "front": "door",
+  "back": "quarter",
+  "window_m": 0.22,
+  "x_min": 0.5,
+  "upper_split": 0,
+  "_note": "26 October 2026: rear door line read on the left view line map, (402,180) to (380,240) px in the new frame",
+  "rows": [
+   "door_low",
+   "belt",
+   "belt_top",
+   "glass_base",
+   "roof_edge"
+  ],
+  "decay_top_m": 0.06,
+  "decay_bottom_m": 0.08,
+  "_note_v247": "26 October 2026: shear limited to the flank band (door_low, belt), eased into the shoulder above and the rocker below ; the shoulder is one panel (no joint across it on the sheet)",
+  "pts": [
+   [
+    -0.505,
+    0.36
+   ],
+   [
+    -0.686,
+    0.862
+   ],
+   [
+    -0.66,
+    0.94
+   ],
+   [
+    -0.634,
+    0.955
+   ],
+   [
+    -0.625,
+    1.0
+   ],
+   [
+    -0.573,
+    1.262
+   ]
+  ],
+  "pairs": [
+   [
+    "door",
+    "quarter"
+   ],
+   [
+    "shoulder",
+    "shoulder_rear"
+   ],
+   [
+    "glass_door",
+    "glass_quarter"
+   ]
+  ],
+  "_note_v248": "26 October 2026: ONE joint from the door bottom to the roof edge (door line, across the shoulder where the top view draws it at z -0.67, then the B pillar on the CAR_pillar_b strip), one grid row ; replaces the separate B pillar slant cut"
+ },
+ "row_y_min": {
+  "floor_centre": 0.15,
+  "floor_edge": 0.15
+ },
+ "_note_skirt": "26 October 2026: floor raised to 0.165 (back view), sill lowered 3.5 cm between the wheels (side view bottom 0.126)",
+ "_note_floor_v196": "26 October 2026: front view sees the underside at 0.13, back view at 0.17 between the tyres, contradiction ; floor at 0.15 splits the error (v195 at 0.165 : back +1.5 %, front -1.25 %)",
+ "_note_breaks_v197": "26 October 2026: rear glass base break -1.77 -> -1.925 (top view frame correction)",
+ "crown_superellipse": 2.2,
+ "_note_crown_v202": "26 October 2026: superellipse crown n 4 with 6 columns (end views : flat roof, tight corner), was u**3 with 4 columns",
+ "_row_dy_removed_v203": {
+  "sill": {
+   "dy": -0.035,
+   "z": [
+    -1.05,
+    0.75
+   ],
+   "ramp_m": 0.2
+  }
+ },
+ "_note_row_dy_v203": "26 October 2026: the sill row_dy (-0.035) is removed : the sheet draws the skirt crease at 0.159 (LineTrace) and the silhouette bottom 0.126 is the fender_inner row below it",
+ "_note_crown_v204": "26 October 2026: superellipse 4 -> 2.5 once the DLO top was re-traced (edge at x 0.65, y 1.275) : front view drop fractions 0.28 at x 0.5 and 0.51 at x 0.6 fit n 2.5",
+ "bulge": {
+  "on": 1,
+  "rows": [
+   "sill",
+   "door_low",
+   "belt",
+   "belt_top"
+  ],
+  "soft_m": 0.006,
+  "wheels": [
+   {
+    "name": "rear",
+    "z0": -1.7,
+    "z1": -1.25,
+    "ramp_m": 0.4,
+    "profile": [
+     [
+      0.1,
+      1.095
+     ],
+     [
+      0.2,
+      1.11
+     ],
+     [
+      0.3,
+      1.12
+     ],
+     [
+      0.5,
+      1.13
+     ],
+     [
+      0.7,
+      1.12
+     ],
+     [
+      0.8,
+      1.12
+     ],
+     [
+      0.85,
+      1.109
+     ],
+     [
+      0.9,
+      1.069
+     ],
+     [
+      0.95,
+      1.035
+     ],
+     [
+      1.0,
+      0.997
+     ],
+     [
+      1.05,
+      0.95
+     ]
+    ],
+    "_test_v316": "26 October 2026: ramp 0.6 : back lines 0.869 -> 0.852, top silhouette -0.001 ; kept 0.4",
+    "_test_v343": "26 October 2026: z1 -1.35 : plan width error at z -1.1 4.8 -> 1.8 cm, top silhouette +0.0004, but back silhouette 0.9484 -> 0.9464 (the back view wants the haunch wider at y 0.85 to 0.95) ; kept -1.25, the shading band in front of the rear arch stays",
+    "_test_v345": "26 October 2026: z1_y [[0.5, -1.38], [0.8, -1.25]] (lower body plateau later) : back silhouette 0.9484 -> 0.9459, the back view sees the tyres at y 0.3 to 0.5 and wants more width there ; option kept in RowLoft, off"
+   },
+   {
+    "name": "front",
+    "z0": 1.15,
+    "z1": 1.75,
+    "ramp_m": 0.3,
+    "profile": [
+     [
+      0.1,
+      1.09
+     ],
+     [
+      0.2,
+      1.1
+     ],
+     [
+      0.3,
+      1.105
+     ],
+     [
+      0.45,
+      1.115
+     ],
+     [
+      0.55,
+      1.112
+     ],
+     [
+      0.65,
+      1.108
+     ],
+     [
+      0.75,
+      1.1
+     ],
+     [
+      0.8,
+      1.095
+     ],
+     [
+      0.85,
+      1.075
+     ],
+     [
+      0.9,
+      1.04
+     ],
+     [
+      0.95,
+      1.01
+     ]
+    ]
+   }
+  ],
+  "_note": "26 October 2026: one smooth bulge field over every side column (sill to belt_top) instead of pushing single rows ; rear profile = mean of front and back view half widths, front profile from the front view below the fender top ; replaces wheel_cover rows and haunch (both off)",
+  "_note_windows_v210": "26 October 2026: windows follow the plan of the top view : rear plateau -1.7..-1.25 fading to 0 at the tail cut -2.1 (plan 1.096 at -1.5, 0.952 at -2.0), front plateau 1.15..1.75 ; a plateau up to the cut widened the tail face corner to 1.12 at y 0.95"
+ },
+ "shoulder_overhang_max": 0.01,
+ "_note_overhang_v213": "26 October 2026: belt held at most 1 cm inside belt_top (the 3.5 cm undercut drew a black S band on the doors)",
+ "row_dx": {
+  "sill": {
+   "dx": -0.035,
+   "z": [
+    -1.05,
+    0.75
+   ],
+   "ramp_m": 0.25
+  },
+  "glass_base": {
+   "dx": -0.045,
+   "z": [
+    -2.0,
+    -1.3
+   ],
+   "ramp_m": 0.3
+  }
+ },
+ "_note_row_dx_v224": "26 October 2026: sill tucked 3.5 cm in between the arches : the sheet shades the band under the lower door crease darker (it faces down), the model had a vertical lower side",
+ "_note_side_rows_v225": "26 October 2026: glass_base and roof_edge join side_rows : the side glass band was ONE quad tall and its quads twisted 5 deg median, 14 deg max (striped glass in every render) ; 8 straight strips divide the twist",
+ "row_dy": {
+  "door_low": {
+   "dy": -0.015,
+   "z": [
+    -1.15,
+    0.85
+   ],
+   "ramp_m": 0.2
+  },
+  "glass_base": [
+   {
+    "dy": -0.02,
+    "z": [
+     -2.0,
+     -1.3
+    ],
+    "ramp_m": 0.3
+   },
+   {
+    "dy": -0.02,
+    "z": [
+     -2.4,
+     -2.1
+    ],
+    "ramp_m": 0.12,
+    "_note": "26 October 2026: deck end 1.4 to 1.8 cm above the side view top (1.018 against 1.000 at z -2.1, 0.992 at -2.2) ; the order of the rows holds the deck on belt_top, so the five upper rows move together"
+   }
+  ],
+  "belt_top": [
+   {
+    "dy": 0.02,
+    "z": [
+     -2.0,
+     -1.3
+    ],
+    "ramp_m": 0.3
+   },
+   {
+    "dy": -0.02,
+    "z": [
+     -2.4,
+     -2.1
+    ],
+    "ramp_m": 0.12,
+    "_note": "26 October 2026: deck end 1.4 to 1.8 cm above the side view top (1.018 against 1.000 at z -2.1, 0.992 at -2.2) ; the order of the rows holds the deck on belt_top, so the five upper rows move together"
+   }
+  ],
+  "roof_centre": [
+   {
+    "dy": -0.02,
+    "z": [
+     1.54,
+     1.62
+    ],
+    "ramp_m": 0.08,
+    "_note": "26 October 2026: the ridge at the windshield and hood joint stood 0.885 where both side masks pass 0.865 and the front view draws a straight windshield base at 0.853",
+    "_note_v269": "26 October 2026: -0.03 gave the same front lines and lost 0.0002 in side silhouette ; -0.02 kept"
+   },
+   {
+    "dy": -0.02,
+    "z": [
+     -2.4,
+     -2.1
+    ],
+    "ramp_m": 0.12,
+    "_note": "26 October 2026: deck end 1.4 to 1.8 cm above the side view top (1.018 against 1.000 at z -2.1, 0.992 at -2.2) ; the order of the rows holds the deck on belt_top, so the five upper rows move together"
+   }
+  ],
+  "roof_edge": [
+   {
+    "dy": -0.02,
+    "z": [
+     -2.4,
+     -2.1
+    ],
+    "ramp_m": 0.12,
+    "_note": "26 October 2026: deck end 1.4 to 1.8 cm above the side view top (1.018 against 1.000 at z -2.1, 0.992 at -2.2) ; the order of the rows holds the deck on belt_top, so the five upper rows move together"
+   }
+  ],
+  "belt": [
+   {
+    "dy": -0.02,
+    "z": [
+     -2.4,
+     -2.1
+    ],
+    "ramp_m": 0.12,
+    "_note": "26 October 2026: deck end 1.4 to 1.8 cm above the side view top (1.018 against 1.000 at z -2.1, 0.992 at -2.2) ; the order of the rows holds the deck on belt_top, so the five upper rows move together"
+   }
+  ]
+ },
+ "_note_door_low_v230": "26 October 2026: the sheet draws the lower door crease as a small step, two lines about 3 cm apart (light edge then shadow) ; LineTrace caught the upper one, LineGaps reported the lower one missed (1.66 m) ; door_low lowered 1.5 cm between the arches, within the 3 px tolerance of both",
+ "_note_rear_glass_base_v238": "26 October 2026: both end views put the half width at y 1.05 at 0.82..0.83 (model 0.888 at z -1.64) : the rear shoulder top is flatter and lower ; glass_base 4.5 cm in and 2 cm down over z -2.0..-1.3 (the plan has no line there, LineTrace strength 0.02)",
+ "_note_band_crown_v239": "26 October 2026: rounded rear shoulder : the belt_top / glass_base band follows a quarter superellipse n 2.5 over z -2.0..-1.3 (end views : full width up to y 1.0, then in to 0.82 at y 1.05)",
+ "_band_crown_off_v240": [
+  {
+   "rows": [
+    "belt_top",
+    "glass_base"
+   ],
+   "n": 2.5,
+   "z": [
+    -2.0,
+    -1.3
+   ],
+   "ramp_m": 0.3
+  }
+ ],
+ "_note_belt_top_v240": "26 October 2026: band_crown (v239) bulged the top of the band (W at y 1.05 +4 to +6 cm again) ; off, kept as an option ; belt_top raised 2 cm at the rear instead (side trace 0.97..1.0) so the shoulder corner sits near (1.0, 1.0) and the top runs flat to (0.80, 1.045)",
+ "_note_crown_v241": "26 October 2026: test 2.5 -> 2.2 : the front view saw the top of the roof 7 cm too wide at y 1.35 (sheet crown drops 7 mm at x 0.28)",
+ "row_x_target": {
+  "glass_base": [
+   {
+    "on": 1,
+    "pts": [
+     [
+      0.233,
+      0.918
+     ],
+     [
+      0.089,
+      0.909
+     ],
+     [
+      -0.114,
+      0.901
+     ],
+     [
+      -0.25,
+      0.888
+     ],
+     [
+      -0.385,
+      0.88
+     ],
+     [
+      -0.52,
+      0.863
+     ],
+     [
+      -0.656,
+      0.846
+     ],
+     [
+      -0.79,
+      0.821
+     ],
+     [
+      -0.926,
+      0.795
+     ],
+     [
+      -1.06,
+      0.753
+     ],
+     [
+      -1.161,
+      0.706
+     ],
+     [
+      -1.25,
+      0.656
+     ],
+     [
+      -1.32,
+      0.647
+     ],
+     [
+      -1.4,
+      0.639
+     ],
+     [
+      -1.55,
+      0.618
+     ],
+     [
+      -1.7,
+      0.596
+     ],
+     [
+      -1.86,
+      0.575
+     ]
+    ],
+    "ramp_front_m": 0.15,
+    "ramp_back_m": 0.3,
+    "smooth": 1,
+    "_note_v246": "26 October 2026: the quarter glass lower rear corner (side view z -1.161, plan x 0.706) and the C pillar fin trace (-1.25 0.656, -1.40 0.639) ; the return to the fitted rear shoulder starts at -1.40, out of the slant cut window",
+    "_note_v260": "26 October 2026: test, the crease follows the C pillar fin trace to the rear glass base (no return to the shoulder, which made a diagonal bump on the buttress in the rear three quarter view)"
+   },
+   {
+    "on": 1,
+    "pts": [
+     [
+      1.1,
+      0.958
+     ],
+     [
+      1.2,
+      0.978
+     ],
+     [
+      1.4,
+      0.987
+     ],
+     [
+      1.6,
+      0.969
+     ],
+     [
+      1.8,
+      0.912
+     ],
+     [
+      1.95,
+      0.87
+     ]
+    ],
+    "ramp_front_m": 0.1,
+    "ramp_back_m": 0.1,
+    "_note": "26 October 2026: front fender top crease traced on the top view (both sides) : 0.978 at z 1.2, 0.987 at 1.4, 0.969 at 1.6, 0.91 at 1.8 ; the row stood 5 to 6 cm inside"
+   }
+  ],
+  "roof_edge": {
+   "on": 1,
+   "pts": [
+    [
+     -1.925,
+     0.53
+    ],
+    [
+     -1.55,
+     0.59
+    ],
+    [
+     -1.23,
+     0.635
+    ],
+    [
+     -0.94,
+     0.639
+    ],
+    [
+     -0.62,
+     0.644
+    ],
+    [
+     -0.3,
+     0.66
+    ],
+    [
+     0.0,
+     0.689
+    ],
+    [
+     0.3,
+     0.686
+    ],
+    [
+     0.5,
+     0.74
+    ],
+    [
+     0.7,
+     0.795
+    ],
+    [
+     1.143,
+     0.88
+    ],
+    [
+     1.354,
+     0.768
+    ],
+    [
+     1.56,
+     0.607
+    ]
+   ],
+   "ramp_front_m": 0.08,
+   "ramp_back_m": 0.2,
+   "smooth": 1,
+   "_note": "26 October 2026: hexagonal windshield in plan, nose keypoints of roof_edge (A pillar base 1.143 x 0.88, cowl corner 1.524 x 0.607) as an x target only ; heights stay on the fitted row ; 26 October 2026: the nose keypoint (0.359, 0.671) sat 2 cm inside the A pillar line read on the top view zoom (0.69 at z 0.3, 0.74 at 0.5, 0.795 at 0.7) and made a 2 cm dip at z 0.35 where the target met the fitted row ; points read on the zoom down to z 0, ramp 0.3 ; 26 October 2026: rear glass narrows to its base (top view strip 0.647 at z -1.23 to 0.529 at -1.925, back view 0.60 to 0.47, nose keypoints 0.62 to 0.55) ; the fitted row stayed at 0.59 ; one polyline over the whole length, the middle on the plan trace (0.639) ; v254 (two windows, middle on the fitted row 0.633) gave the same mean ; the single polyline on the plan trace (0.639) is kept (v255)",
+   "_note_v256": "26 October 2026: the cowl corner V moved from z 1.524 to the windshield and hood joint (1.56) ; inside the windshield it twisted the quads 5 to 7.5 deg (light triangles in the hero render)",
+   "_note_v314": "26 October 2026: top view gradient (both sides) : glass inner edge 0.644 at z -0.6, 0.660 at -0.3, 0.689 at 0, 0.685 at 0.3 ; the end views find the roof 5 to 6 cm narrow at y 1.3"
+  }
+ },
+ "_note_row_x_target_v242": "26 October 2026: quarter window outer edge in plan (top view plan_dlo_bottom to its tip at z -1.2) : glass_base |x| 0.776 -> 0.719 at z -0.97, 0.648 at the tip, back to the fitted row over 0.35 m behind",
+ "_note_row_x_target_v243": "26 October 2026: plan_dlo_bottom of design_curves_top_world.json is stale (older frame, 4 to 6 cm inside the window edge mid door) ; the target is now the LineTrace of the window outer edge in the current frame, mean of both sides (trace_26oct/top_dlo_outer_*.json)",
+ "slant_cuts": [
+  {
+   "on": 1,
+   "top": [
+    -1.248,
+    1.192
+   ],
+   "bottom": [
+    -1.15,
+    1.045
+   ],
+   "front": "glass_quarter",
+   "back": "quarter",
+   "window_m": 0.1,
+   "x_min": 0.5,
+   "rows": [
+    "glass_base",
+    "roof_edge"
+   ],
+   "_note": "26 October 2026: quarter window rear edge, side view line (-1.161, 1.062) to the tip (-1.216, 1.144) extended to the glass_base and roof_edge rows (dz/dy -0.67)",
+   "decay_top_m": 0.05,
+   "decay_bottom_m": 0.05
+  },
+  {
+   "on": 1,
+   "pts": [
+    [
+     0.327,
+     1.1556
+    ],
+    [
+     0.33,
+     1.1824
+    ],
+    [
+     0.338,
+     1.2047
+    ],
+    [
+     0.35,
+     1.2239
+    ],
+    [
+     0.374,
+     1.2395
+    ],
+    [
+     0.397,
+     1.2511
+    ],
+    [
+     0.414,
+     1.2582
+    ],
+    [
+     0.42,
+     1.2606
+    ]
+   ],
+   "pairs": [
+    [
+     "glass_windshield",
+     "roof"
+    ]
+   ],
+   "rows": [
+    "roof_centre",
+    "roof_edge"
+   ],
+   "x_min": -1.0,
+   "window_m": 0.12,
+   "decay_bottom_m": 0.06,
+   "_note": "26 October 2026: windshield top as an arc in plan (top view gradient : z 0.42 at the centre, 0.413 at x 0.2, 0.388 at 0.4, 0.353 at 0.55), mapped onto the crown columns by their height at z 0.384"
+  }
+ ],
+ "_note_breaks_v249": "26 October 2026: C0 break at the A pillar base (roof_edge 1.143, glass_base 1.146) ; the nose keypoints draw the hexagonal windshield (A pillar base x 0.88, cowl corner 0.607) but one knot every 0.9 m rounded the corner (0.827 and 0.685) ; v249 front lines 0.769 -> 0.738 (y bulged 3 cm between keypoints), reverted in v250",
+ "crown_flat": {
+  "on": 0,
+  "z": [
+   1.64,
+   2.4
+  ],
+  "ramp_m": 0.08,
+  "_note": "26 October 2026: test, faceted hood (two flat panes) ahead of the windshield and hood joint (1.56)",
+  "_note_v261": "26 October 2026: the two flat panes drew a centre ridge the sheet does not have, front lines 0.762 -> 0.757 ; off (dome kept, the side silhouette puts the hood centre 5 cm above its edges)"
+ },
+ "rail": {
+  "on": 1,
+  "u_min": 0.9,
+  "panels": [
+   "glass_windshield_C",
+   "roof_C",
+   "glass_rear_C"
+  ],
+  "_note": "26 October 2026: window frame rail, the two outer crown strips (about 3.6 cm tall in the side view, 5.8 cm wide in plan)",
+  "_note_width": "26 October 2026: u_min 0.95 (one strip) 0.807, 0.9 (two strips) 0.809, 0.78 (three strips) 0.794 ; 0.9 kept",
+  "_note_v283": "26 October 2026: crown_n 6 -> 8 puts a column at u 0.945 : rail 3.5 to 4.7 cm wide in plan, the sheet draws 4.8 cm (top view gradient z 0 : 0.628 to 0.676) ; result 0.816 and 0.751 against 0.817 and 0.756 : back to crown_n 6, u_min 0.9 (its inner edge falls on a sheet line at the rear)"
+ },
+ "row_y_target": {
+  "door_low": {
+   "on": 1,
+   "pts": [
+    [
+     0.8,
+     0.264
+    ],
+    [
+     0.7,
+     0.268
+    ],
+    [
+     0.6,
+     0.274
+    ],
+    [
+     0.5,
+     0.28
+    ],
+    [
+     0.4,
+     0.284
+    ],
+    [
+     0.3,
+     0.289
+    ],
+    [
+     0.2,
+     0.295
+    ],
+    [
+     0.1,
+     0.299
+    ],
+    [
+     0.0,
+     0.304
+    ],
+    [
+     -0.1,
+     0.31
+    ],
+    [
+     -0.2,
+     0.313
+    ],
+    [
+     -0.3,
+     0.319
+    ],
+    [
+     -0.4,
+     0.325
+    ],
+    [
+     -0.5,
+     0.331
+    ],
+    [
+     -0.6,
+     0.334
+    ],
+    [
+     -0.7,
+     0.346
+    ],
+    [
+     -0.8,
+     0.363
+    ],
+    [
+     -0.9,
+     0.383
+    ],
+    [
+     -1.0,
+     0.405
+    ],
+    [
+     -1.1,
+     0.425
+    ],
+    [
+     -1.2,
+     0.446
+    ],
+    [
+     -1.3,
+     0.466
+    ]
+   ],
+   "ramp_front_m": 0.1,
+   "ramp_back_m": 0.1,
+   "_note": "26 October 2026: lower door crease, mid point of the sheet's line pair (light edge and shadow 2 cm apart), mean of the left and right side views, gradient peaks every 0.1 m ; replaces the flat row_dy -0.015 in this window",
+   "fit": "poly",
+   "deg": 3
+  },
+  "belt": {
+   "on": 1,
+   "pts": [
+    [
+     -0.9,
+     0.91
+    ],
+    [
+     -0.8,
+     0.897
+    ],
+    [
+     -0.7,
+     0.888
+    ],
+    [
+     -0.6,
+     0.88
+    ],
+    [
+     -0.5,
+     0.872
+    ],
+    [
+     -0.4,
+     0.86
+    ],
+    [
+     -0.3,
+     0.851
+    ],
+    [
+     -0.2,
+     0.843
+    ],
+    [
+     -0.1,
+     0.831
+    ],
+    [
+     0.0,
+     0.822
+    ],
+    [
+     0.1,
+     0.815
+    ],
+    [
+     0.2,
+     0.806
+    ],
+    [
+     0.3,
+     0.794
+    ],
+    [
+     0.4,
+     0.785
+    ],
+    [
+     0.5,
+     0.773
+    ],
+    [
+     0.6,
+     0.761
+    ],
+    [
+     0.7,
+     0.753
+    ],
+    [
+     0.8,
+     0.745
+    ],
+    [
+     0.9,
+     0.731
+    ]
+   ],
+   "ramp_front_m": 0.15,
+   "ramp_back_m": 0.15,
+   "_note": "26 October 2026: lower edge of the shoulder band, gradient peaks every 0.1 m on both side views (mean) ; the fitted row rose to 0.888 at z 1.0 where the sheet draws a straight line descending to 0.731",
+   "fit": "poly",
+   "deg": 3
+  },
+  "roof_edge": [
+   {
+    "on": 1,
+    "pts": [
+     [
+      -0.55,
+      1.256
+     ],
+     [
+      -0.6,
+      1.25
+     ],
+     [
+      -0.7,
+      1.237
+     ],
+     [
+      -0.8,
+      1.224
+     ],
+     [
+      -0.9,
+      1.205
+     ],
+     [
+      -1.0,
+      1.185
+     ],
+     [
+      -1.1,
+      1.16
+     ],
+     [
+      -1.2,
+      1.135
+     ]
+    ],
+    "ramp_front_m": 0.12,
+    "ramp_back_m": 0.1,
+    "_note": "26 October 2026: top edge of the quarter window, mid of the gradient pair on both side views ; the traced dlo_top put it 1 to 6 cm high from z -0.6 to -1.2",
+    "fit": "poly",
+    "deg": 3
+   },
+   {
+    "on": 1,
+    "pts": [
+     [
+      0.483,
+      1.12
+     ],
+     [
+      0.569,
+      1.08
+     ],
+     [
+      0.651,
+      1.04
+     ],
+     [
+      0.726,
+      1.0
+     ],
+     [
+      0.85,
+      0.95
+     ],
+     [
+      0.96,
+      0.915
+     ]
+    ],
+    "ramp_front_m": 0.12,
+    "ramp_back_m": 0.1,
+    "_note": "26 October 2026: top edge of the door glass under the A pillar, gradient on both side views (y 1.12 at z 0.483 to 1.0 at 0.726), the pillar meets the shoulder at (0.963, 0.915) ; the row stood 5 cm high at z 0.68",
+    "fit": "poly",
+    "deg": 3
+   }
+  ]
+ },
+ "side_edge": {
+  "on": 1,
+  "m": 0.012,
+  "rows": [
+   "door_low",
+   "roof_edge",
+   "belt_top"
+  ],
+  "_note": "26 October 2026: one column 12 mm from the listed rows on each side, the joint groove becomes a sharp V that draws the lower door crease",
+  "_tests": "26 October 2026: belt (mean lines 0.827 -> 0.826), belt_top (same), sill (same) ; door_low only ; 26 October 2026 v306 : belt at its traced height, lines 0.849 same, front and top -0.002 ; door_low only ; 26 October 2026 v332 : belt_top again, every score identical (no panel joint on that row) ; door_low and roof_edge ; 26 October 2026 v338 joint grooves 16 mm (env GROOVE) and v339 m 0.008 : lines identical, normal only -0.002 ; 12 mm kept"
+ },
+ "_row_y_target_off": {
+  "belt_top_v307": {
+   "on": 0,
+   "pts": [
+    [
+     -0.4,
+     0.942
+    ],
+    [
+     -0.3,
+     0.933
+    ],
+    [
+     -0.2,
+     0.924
+    ],
+    [
+     -0.1,
+     0.917
+    ],
+    [
+     0.0,
+     0.908
+    ],
+    [
+     0.1,
+     0.902
+    ],
+    [
+     0.2,
+     0.896
+    ],
+    [
+     0.3,
+     0.893
+    ],
+    [
+     0.4,
+     0.893
+    ],
+    [
+     0.5,
+     0.893
+    ],
+    [
+     0.6,
+     0.9
+    ],
+    [
+     0.7,
+     0.902
+    ]
+   ],
+   "ramp_front_m": 0.15,
+   "ramp_back_m": 0.15,
+   "_note": "26 October 2026: upper edge of the shoulder band, gradient peaks on both side views (mean) ; the fitted row stood 3 to 4 cm high at z 0.4 to 0.6"
+  }
+ },
+ "_test_crown_v315": "26 October 2026: crown_superellipse 3.0 : silhouette 0.9690 -> 0.9684 (back 0.9490 -> 0.9467), top lines 0.824 -> 0.816, front half width +94 mm at y 1.35 ; kept 2.2",
+ "crown_extra_u": [
+  0.8896,
+  0.9296
+ ],
+ "_note_crown_extra_v323": "26 October 2026: two crown columns 0.02 in u (1.4 cm) on each side of the rail joint column (u 0.9096)",
+ "band_crease": [
+  {
+   "on": 1,
+   "rows": [
+    "glass_base",
+    "belt_top"
+   ],
+   "pts_zx": [
+    [
+     -0.9,
+     0.851
+    ],
+    [
+     -1.1,
+     0.821
+    ],
+    [
+     -1.3,
+     0.787
+    ],
+    [
+     -1.5,
+     0.745
+    ],
+    [
+     -1.7,
+     0.686
+    ],
+    [
+     -1.85,
+     0.635
+    ]
+   ],
+   "lift_m": 0.03,
+   "ramp_m": 0.15,
+   "_note": "26 October 2026: rear buttress edge traced on the top view (gradient, both sides) ; back view 3 cm low at x 0.7 to 0.8",
+   "_tests": "26 October 2026: lift 0.03 (v327) top 0.852 -> 0.859, lines 0.877 ; lift by z 0 to 0.03 (v328) top 0.851 ; lift 0.015 (v329) top 0.852 ; 0.03 kept, the back view then finds x 0.85 to 0.9 up to 29 mm high"
+  }
+ ],
+ "vent": {
+  "on": 1,
+  "band": [
+   "door_low",
+   "belt"
+  ],
+  "y_pts": [
+   [
+    0.675,
+    0.695
+   ],
+   [
+    0.7,
+    0.695
+   ],
+   [
+    0.75,
+    0.693
+   ],
+   [
+    0.8,
+    0.686
+   ],
+   [
+    0.85,
+    0.686
+   ],
+   [
+    0.9,
+    0.704
+   ],
+   [
+    0.95,
+    0.718
+   ]
+  ],
+  "ramp_m": 0.02,
+  "depth_pts": [
+   [
+    0.665,
+    0.0
+   ],
+   [
+    0.69,
+    0.02
+   ],
+   [
+    0.75,
+    0.02
+   ],
+   [
+    0.85,
+    0.016
+   ],
+   [
+    0.92,
+    0.006
+   ],
+   [
+    0.95,
+    0.0
+   ]
+  ],
+  "_note": "26 October 2026: front fender vent, lower edge read on both side views (GradientProfile : 0.686 to 0.695 from z 0.85 to 0.70, 0.704 at 0.90, tip at 0.95), upper edge on the belt row ; 18 mm deep at the door joint",
+  "_test_v346": "26 October 2026: the moved column 5 to 6 cm from its neighbours makes an 18 degree V that barely reads and bends the door joint line ; the sheet vent needs a lip and a 1.5 to 2 cm slot (two close columns, deeper) ; off",
+  "slot_m": 0.02,
+  "wall_m": 0.003,
+  "_test_v348_v349": "26 October 2026: slot_m 0.02 (four columns : wall, floor, floor, wall, floor 20 mm in) reads like the sheet vent and the missed lower edge turns green, but its tip leaves slivers at the front arch edge and the band subdivision changes along the whole car (right view 0.916 -> 0.906, lines 0.883 -> 0.881) ; off",
+  "keep_band": 1,
+  "far_row": "belt"
+ },
+ "edge_dy": {
+  "belt_top": {
+   "on": 1,
+   "side": "glass_base",
+   "dy": -0.002,
+   "z": [
+    -2.0,
+    -0.95
+   ],
+   "ramp_m": 0.1,
+   "_note": "26 October 2026: rear haunch crease (top view line 0.95 to 1.0 from z -0.95 to -2.02), crease back over 41 degrees"
+  }
+ },
+ "loop_decimate": {
+  "on": 1,
+  "tol_m": 0.0015,
+  "max_gap_m": 0.05,
+  "arch_margin_m": 0.1,
+  "_note": "26 October 2026: retopology, loop decimation at the end of RowLoft (skill section 69)",
+  "arch_exclude": 0
+ },
+ "col_refine": {
+  "on": 1,
+  "target_m": 0.035,
+  "min_ratio": 1.5,
+  "_note": "26 October 2026: retopology, longitudinal loops in wide column gaps (skill section 70)",
+  "panels": [
+   "roof",
+   "hood",
+   "glass_windshield",
+   "glass_rear",
+   "door",
+   "glass_door"
+  ],
+  "_test_v379": "26 October 2026: under_floor added : faults 7399 -> 9333, front normal lines 0.685 -> 0.668 (bow tie fans at the rear arches split into worse quads) ; the floor needs a rebuild, not a split"
+ },
+ "arch_patch": {
+  "on": 1,
+  "k": 8,
+  "band_m": 0.1,
+  "x_side": 1.0,
+  "_note": "26 October 2026: retopology, concentric loops around each arch (skill section 71)",
+  "debug": 0
+ }
+}
