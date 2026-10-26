@@ -1,0 +1,202 @@
+{
+"limit_p95_deg": 3.0,
+"bad": 15,
+"panels": [
+{
+"panel": "bumper_rear_C",
+"quads": 476,
+"median": 0.22,
+"p95": 29.42,
+"max": 40.86
+},
+{
+"panel": "bumper_front_C",
+"quads": 1428,
+"median": 0.46,
+"p95": 22.2,
+"max": 28.06
+},
+{
+"panel": "under_floor_C",
+"quads": 4254,
+"median": 0.12,
+"p95": 17.6,
+"max": 171.58
+},
+{
+"panel": "fender_front_L",
+"quads": 1744,
+"median": 0.29,
+"p95": 9.55,
+"max": 179.99
+},
+{
+"panel": "fender_front_R",
+"quads": 1744,
+"median": 0.29,
+"p95": 9.55,
+"max": 179.99
+},
+{
+"panel": "quarter_L",
+"quads": 1883,
+"median": 0.61,
+"p95": 7.18,
+"max": 180.0
+},
+{
+"panel": "quarter_R",
+"quads": 1883,
+"median": 0.61,
+"p95": 7.18,
+"max": 180.0
+},
+{
+"panel": "shoulder_L",
+"quads": 3852,
+"median": 0.59,
+"p95": 6.1,
+"max": 33.2
+},
+{
+"panel": "shoulder_R",
+"quads": 3852,
+"median": 0.59,
+"p95": 6.1,
+"max": 33.2
+},
+{
+"panel": "shoulder_rear_L",
+"quads": 2232,
+"median": 0.81,
+"p95": 4.31,
+"max": 19.29
+},
+{
+"panel": "shoulder_rear_R",
+"quads": 2232,
+"median": 0.81,
+"p95": 4.31,
+"max": 19.29
+},
+{
+"panel": "rail_L",
+"quads": 777,
+"median": 0.19,
+"p95": 4.01,
+"max": 12.84
+},
+{
+"panel": "rail_R",
+"quads": 777,
+"median": 0.19,
+"p95": 4.01,
+"max": 12.84
+},
+{
+"panel": "glass_door_L",
+"quads": 1116,
+"median": 0.66,
+"p95": 3.78,
+"max": 8.57
+},
+{
+"panel": "glass_door_R",
+"quads": 1116,
+"median": 0.66,
+"p95": 3.78,
+"max": 8.57
+},
+{
+"panel": "glass_quarter_L",
+"quads": 441,
+"median": 0.57,
+"p95": 2.94,
+"max": 18.36
+},
+{
+"panel": "glass_quarter_R",
+"quads": 441,
+"median": 0.57,
+"p95": 2.94,
+"max": 18.36
+},
+{
+"panel": "hood_C",
+"quads": 2352,
+"median": 0.15,
+"p95": 1.59,
+"max": 9.65
+},
+{
+"panel": "glass_windshield_C",
+"quads": 2952,
+"median": 0.14,
+"p95": 1.28,
+"max": 2.62
+},
+{
+"panel": "glass_rear_C",
+"quads": 2448,
+"median": 0.0,
+"p95": 1.26,
+"max": 18.9
+},
+{
+"panel": "rocker_L",
+"quads": 2763,
+"median": 0.22,
+"p95": 1.08,
+"max": 179.96
+},
+{
+"panel": "rocker_R",
+"quads": 2763,
+"median": 0.22,
+"p95": 1.08,
+"max": 179.96
+},
+{
+"panel": "door_L",
+"quads": 1729,
+"median": 0.14,
+"p95": 0.29,
+"max": 96.7
+},
+{
+"panel": "door_R",
+"quads": 1729,
+"median": 0.14,
+"p95": 0.29,
+"max": 96.7
+},
+{
+"panel": "roof_C",
+"quads": 3924,
+"median": 0.02,
+"p95": 0.13,
+"max": 0.54
+},
+{
+"panel": "decklid_C",
+"quads": 414,
+"median": 0.01,
+"p95": 0.04,
+"max": 0.08
+},
+{
+"panel": "fascia_front_C",
+"quads": 73,
+"median": 0.0,
+"p95": 0.0,
+"max": 180.0
+},
+{
+"panel": "fascia_rear_C",
+"quads": 73,
+"median": 0.0,
+"p95": 0.0,
+"max": 180.0
+}
+]
+}

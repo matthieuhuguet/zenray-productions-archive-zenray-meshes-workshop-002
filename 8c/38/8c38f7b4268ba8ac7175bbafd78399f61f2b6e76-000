@@ -1,0 +1,24 @@
+# TopoCheck Topo_v380 (26 October 2026 tool)
+
+Score (faces without any error) : **0.9273** ; 112665 faces, 99.55 % quads, 368 triangles, 134 n-gons.
+
+Hard errors : non-manifold edges 9, cracks 663, flipped edges 28, bad poles 172, poles on sharp edges 88.
+
+Quads : aspect p95 6.98, corner angle deviation p95 43.4 deg, fold p95 5.46 deg ; edge length p5 / p50 / p95 [4.65, 16.82, 49.95] mm.
+
+| Category | Faces | % | Worst parts |
+|---|---|---|---|
+| ngon | 134 | 0.119 | CAR_vent_rear_R 20, CAR_body_quarter_L 16, CAR_body_quarter_R 16, CAR_body_tail_face_C 13 |
+| degenerate | 108 | 0.096 | CAR_body_liner 100, CAR_body_tail_face_C 2, CAR_light_bar_rear_C 2, CAR_body_rocker_L 2 |
+| nonmanifold | 26 | 0.023 | CAR_body_rocker_R 5, CAR_body_rocker_L 5, CAR_body_nose_fascia_C 4, CAR_body_nose_under_C 4 |
+| crack | 392 | 0.348 | CAR_body_liner 228, CAR_vent_rear_R 96, CAR_body_tail_face_C 48, CAR_diffuser_rear_C 20 |
+| flipped | 39 | 0.035 | CAR_body_liner 8, CAR_body_nose_fascia_C 7, CAR_body_rocker_R 4, CAR_body_rocker_L 4 |
+| aspect | 2246 | 1.994 | CAR_body_under_floor_C 783, CAR_body_liner 402, CAR_body_tail_face_C 144, CAR_body_shoulder_rear_L 97 |
+| angle | 2383 | 2.115 | CAR_body_liner 524, CAR_body_under_floor_C 289, CAR_body_fender_front_R 198, CAR_body_fender_front_L 198 |
+| fold | 2405 | 2.135 | CAR_body_under_floor_C 395, CAR_body_fender_front_R 193, CAR_body_fender_front_L 193, CAR_body_liner 164 |
+| density | 1956 | 1.736 | CAR_body_under_floor_C 901, CAR_body_shoulder_rear_L 156, CAR_body_tail_face_C 156, CAR_body_shoulder_rear_R 156 |
+| bad_pole | 1096 | 0.973 | CAR_body_under_floor_C 340, CAR_body_fender_front_L 82, CAR_body_fender_front_R 82, CAR_body_rocker_L 79 |
+| pole_on_sharp | 278 | 0.247 | CAR_body_under_floor_C 75, CAR_body_rocker_L 39, CAR_body_rocker_R 39, CAR_body_shoulder_R 19 |
+| tri | 368 | 0.327 | CAR_body_under_floor_C 232, CAR_body_bumper_rear_C 18, CAR_body_quarter_L 15, CAR_body_quarter_R 15 |
+
+Symmetry pairs 29, mismatched 1 : CAR_vent_rear_L ([4, 354, 12] / [10, 458, 20], p95 0.0 mm)

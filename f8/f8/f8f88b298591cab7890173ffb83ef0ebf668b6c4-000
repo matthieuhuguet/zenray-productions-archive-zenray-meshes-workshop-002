@@ -1,0 +1,545 @@
+{
+ "_date": "26 October 2026",
+ "faces": 112665,
+ "points": 119750,
+ "quads": 112163,
+ "tris": 368,
+ "ngons": 134,
+ "quad_pct": 99.554,
+ "nonmanifold_edges": 9,
+ "boundary_edges": 14097,
+ "cracks": 663,
+ "flipped_edges": 28,
+ "interior_poles": 1564,
+ "bad_poles": 172,
+ "poles_on_sharp": 88,
+ "valence_hist": {
+  "2": 0,
+  "3": 1056,
+  "4": 104091,
+  "5": 336,
+  "6": 140,
+  "7": 0,
+  "8": 12
+ },
+ "aspect_p95": 6.98,
+ "angle_dev_p95_deg": 43.4,
+ "fold_p95_deg": 5.46,
+ "edge_mm_p5_p50_p95": [
+  4.65,
+  16.82,
+  49.95
+ ],
+ "error_faces": 8191,
+ "score_clean": 0.9273,
+ "categories": {
+  "ngon": {
+   "faces": 134,
+   "pct": 0.119,
+   "parts": [
+    [
+     "CAR_vent_rear_R",
+     20
+    ],
+    [
+     "CAR_body_quarter_L",
+     16
+    ],
+    [
+     "CAR_body_quarter_R",
+     16
+    ],
+    [
+     "CAR_body_tail_face_C",
+     13
+    ],
+    [
+     "CAR_vent_rear_L",
+     12
+    ],
+    [
+     "CAR_body_bumper_front_C",
+     8
+    ],
+    [
+     "CAR_body_fender_front_L",
+     8
+    ],
+    [
+     "CAR_body_fender_front_R",
+     8
+    ]
+   ],
+   "example_xyz": [
+    -0.747,
+    0.566,
+    2.069
+   ]
+  },
+  "degenerate": {
+   "faces": 108,
+   "pct": 0.096,
+   "parts": [
+    [
+     "CAR_body_liner",
+     100
+    ],
+    [
+     "CAR_body_tail_face_C",
+     2
+    ],
+    [
+     "CAR_light_bar_rear_C",
+     2
+    ],
+    [
+     "CAR_body_rocker_L",
+     2
+    ],
+    [
+     "CAR_body_rocker_R",
+     2
+    ]
+   ],
+   "example_xyz": [
+    1.011,
+    0.169,
+    0.925
+   ]
+  },
+  "nonmanifold": {
+   "faces": 26,
+   "pct": 0.023,
+   "parts": [
+    [
+     "CAR_body_rocker_R",
+     5
+    ],
+    [
+     "CAR_body_rocker_L",
+     5
+    ],
+    [
+     "CAR_body_nose_fascia_C",
+     4
+    ],
+    [
+     "CAR_body_nose_under_C",
+     4
+    ],
+    [
+     "CAR_body_nose_under_edge_L",
+     2
+    ],
+    [
+     "CAR_body_nose_under_edge_R",
+     2
+    ],
+    [
+     "CAR_body_nose_skirt_L",
+     2
+    ],
+    [
+     "CAR_body_nose_skirt_R",
+     2
+    ]
+   ],
+   "example_xyz": [
+    -0.994,
+    0.166,
+    0.925
+   ]
+  },
+  "crack": {
+   "faces": 392,
+   "pct": 0.348,
+   "parts": [
+    [
+     "CAR_body_liner",
+     228
+    ],
+    [
+     "CAR_vent_rear_R",
+     96
+    ],
+    [
+     "CAR_body_tail_face_C",
+     48
+    ],
+    [
+     "CAR_diffuser_rear_C",
+     20
+    ]
+   ],
+   "example_xyz": [
+    -0.942,
+    0.281,
+    -2.11
+   ]
+  },
+  "flipped": {
+   "faces": 39,
+   "pct": 0.035,
+   "parts": [
+    [
+     "CAR_body_liner",
+     8
+    ],
+    [
+     "CAR_body_nose_fascia_C",
+     7
+    ],
+    [
+     "CAR_body_rocker_R",
+     4
+    ],
+    [
+     "CAR_body_rocker_L",
+     4
+    ],
+    [
+     "CAR_body_nose_under_C",
+     4
+    ],
+    [
+     "CAR_body_nose_hood_C",
+     2
+    ],
+    [
+     "CAR_body_nose_cheek_side_L",
+     1
+    ],
+    [
+     "CAR_body_nose_lower_L",
+     1
+    ]
+   ],
+   "example_xyz": [
+    -0.997,
+    0.154,
+    0.924
+   ]
+  },
+  "aspect": {
+   "faces": 2246,
+   "pct": 1.994,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     783
+    ],
+    [
+     "CAR_body_liner",
+     402
+    ],
+    [
+     "CAR_body_tail_face_C",
+     144
+    ],
+    [
+     "CAR_body_shoulder_rear_L",
+     97
+    ],
+    [
+     "CAR_body_shoulder_rear_R",
+     97
+    ],
+    [
+     "CAR_body_shoulder_R",
+     93
+    ],
+    [
+     "CAR_body_shoulder_L",
+     93
+    ],
+    [
+     "CAR_diffuser_rear_C",
+     80
+    ]
+   ],
+   "example_xyz": [
+    -0.895,
+    0.573,
+    2.05
+   ]
+  },
+  "angle": {
+   "faces": 2383,
+   "pct": 2.115,
+   "parts": [
+    [
+     "CAR_body_liner",
+     524
+    ],
+    [
+     "CAR_body_under_floor_C",
+     289
+    ],
+    [
+     "CAR_body_fender_front_R",
+     198
+    ],
+    [
+     "CAR_body_fender_front_L",
+     198
+    ],
+    [
+     "CAR_body_rocker_R",
+     160
+    ],
+    [
+     "CAR_body_rocker_L",
+     160
+    ],
+    [
+     "CAR_body_shoulder_R",
+     124
+    ],
+    [
+     "CAR_body_shoulder_L",
+     124
+    ]
+   ],
+   "example_xyz": [
+    -0.701,
+    0.149,
+    1.756
+   ]
+  },
+  "fold": {
+   "faces": 2405,
+   "pct": 2.135,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     395
+    ],
+    [
+     "CAR_body_fender_front_R",
+     193
+    ],
+    [
+     "CAR_body_fender_front_L",
+     193
+    ],
+    [
+     "CAR_body_liner",
+     164
+    ],
+    [
+     "CAR_body_shoulder_L",
+     150
+    ],
+    [
+     "CAR_body_shoulder_R",
+     150
+    ],
+    [
+     "CAR_body_rocker_R",
+     114
+    ],
+    [
+     "CAR_body_rocker_L",
+     112
+    ]
+   ],
+   "example_xyz": [
+    -1.088,
+    0.689,
+    1.827
+   ]
+  },
+  "density": {
+   "faces": 1956,
+   "pct": 1.736,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     901
+    ],
+    [
+     "CAR_body_shoulder_rear_L",
+     156
+    ],
+    [
+     "CAR_body_tail_face_C",
+     156
+    ],
+    [
+     "CAR_body_shoulder_rear_R",
+     156
+    ],
+    [
+     "CAR_fascia_rear_panel_C",
+     108
+    ],
+    [
+     "CAR_splitter_blade_C",
+     60
+    ],
+    [
+     "CAR_body_liner",
+     56
+    ],
+    [
+     "CAR_grille_lower_C",
+     44
+    ]
+   ],
+   "example_xyz": [
+    -0.375,
+    0.222,
+    2.05
+   ]
+  },
+  "bad_pole": {
+   "faces": 1096,
+   "pct": 0.973,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     340
+    ],
+    [
+     "CAR_body_fender_front_L",
+     82
+    ],
+    [
+     "CAR_body_fender_front_R",
+     82
+    ],
+    [
+     "CAR_body_rocker_L",
+     79
+    ],
+    [
+     "CAR_body_rocker_R",
+     79
+    ],
+    [
+     "CAR_body_shoulder_L",
+     63
+    ],
+    [
+     "CAR_body_shoulder_R",
+     63
+    ],
+    [
+     "CAR_body_quarter_R",
+     46
+    ]
+   ],
+   "example_xyz": [
+    -1.026,
+    0.633,
+    1.906
+   ]
+  },
+  "pole_on_sharp": {
+   "faces": 278,
+   "pct": 0.247,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     75
+    ],
+    [
+     "CAR_body_rocker_L",
+     39
+    ],
+    [
+     "CAR_body_rocker_R",
+     39
+    ],
+    [
+     "CAR_body_shoulder_R",
+     19
+    ],
+    [
+     "CAR_body_shoulder_L",
+     16
+    ],
+    [
+     "CAR_body_fender_front_L",
+     9
+    ],
+    [
+     "CAR_body_fender_front_R",
+     9
+    ],
+    [
+     "CAR_body_tail_face_C",
+     8
+    ]
+   ],
+   "example_xyz": [
+    -0.741,
+    0.152,
+    1.817
+   ]
+  },
+  "tri": {
+   "faces": 368,
+   "pct": 0.327,
+   "parts": [
+    [
+     "CAR_body_under_floor_C",
+     232
+    ],
+    [
+     "CAR_body_bumper_rear_C",
+     18
+    ],
+    [
+     "CAR_body_quarter_L",
+     15
+    ],
+    [
+     "CAR_body_quarter_R",
+     15
+    ],
+    [
+     "CAR_body_tail_face_C",
+     14
+    ],
+    [
+     "CAR_vent_rear_R",
+     10
+    ],
+    [
+     "CAR_body_fender_front_R",
+     8
+    ],
+    [
+     "CAR_body_fender_front_L",
+     8
+    ]
+   ],
+   "example_xyz": [
+    -0.745,
+    0.156,
+    1.818
+   ]
+  }
+ },
+ "symmetry_pairs": 29,
+ "symmetry_bad": [
+  {
+   "L": "CAR_vent_rear_L",
+   "R": "CAR_vent_rear_R",
+   "faces_L": [
+    4,
+    354,
+    12
+   ],
+   "faces_R": [
+    10,
+    458,
+    20
+   ],
+   "same_counts": false,
+   "mirror_p95_mm": 0.0,
+   "mirror_max_mm": 0.0
+  }
+ ]
+}

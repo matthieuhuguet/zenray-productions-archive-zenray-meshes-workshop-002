@@ -1,0 +1,24 @@
+# TopoCheck Topo_v379 (26 October 2026 tool)
+
+Score (faces without any error) : **0.9217** ; 119130 faces, 99.53 % quads, 447 triangles, 117 n-gons.
+
+Hard errors : non-manifold edges 7, cracks 516, flipped edges 16, bad poles 200, poles on sharp edges 282.
+
+Quads : aspect p95 7.42, corner angle deviation p95 38.3 deg, fold p95 4.14 deg ; edge length p5 / p50 / p95 [4.34, 20.39, 50.0] mm.
+
+| Category | Faces | % | Worst parts |
+|---|---|---|---|
+| ngon | 117 | 0.098 | CAR_vent_rear_R 26, CAR_vent_rear_L 15, CAR_body_tail_face_C 13, CAR_body_bumper_front_C 8 |
+| degenerate | 86 | 0.072 | CAR_body_liner 82, CAR_light_bar_rear_C 2, CAR_body_tail_face_C 2 |
+| nonmanifold | 16 | 0.013 | CAR_body_nose_under_C 4, CAR_body_nose_fascia_C 4, CAR_body_nose_under_edge_L 2, CAR_body_nose_skirt_R 2 |
+| crack | 406 | 0.341 | CAR_body_liner 242, CAR_vent_rear_R 96, CAR_body_tail_face_C 48, CAR_diffuser_rear_C 20 |
+| flipped | 23 | 0.019 | CAR_body_nose_fascia_C 7, CAR_body_nose_under_C 4, CAR_body_nose_hood_C 2, CAR_body_nose_under_edge_R 1 |
+| aspect | 2944 | 2.471 | CAR_body_under_floor_C 1219, CAR_body_liner 514, CAR_body_shoulder_L 219, CAR_body_shoulder_R 216 |
+| angle | 2956 | 2.481 | CAR_body_under_floor_C 1641, CAR_body_liner 406, CAR_body_fender_front_R 89, CAR_body_fender_front_L 89 |
+| fold | 1616 | 1.357 | CAR_body_under_floor_C 261, CAR_body_liner 118, CAR_body_door_L 103, CAR_body_door_R 102 |
+| density | 1895 | 1.591 | CAR_body_under_floor_C 804, CAR_body_tail_face_C 166, CAR_body_shoulder_rear_R 109, CAR_body_shoulder_rear_L 109 |
+| bad_pole | 1135 | 0.953 | CAR_body_under_floor_C 340, CAR_body_shoulder_L 122, CAR_body_shoulder_R 95, CAR_body_rocker_L 76 |
+| pole_on_sharp | 718 | 0.603 | CAR_body_fender_front_R 101, CAR_body_fender_front_L 101, CAR_body_quarter_L 81, CAR_body_quarter_R 81 |
+| tri | 447 | 0.375 | CAR_body_under_floor_C 228, CAR_body_shoulder_L 70, CAR_body_shoulder_R 40, CAR_vent_rear_R 14 |
+
+Symmetry pairs 29, mismatched 2 : CAR_body_shoulder_L ([70, 4791, 2] / [40, 4814, 2], p95 0.0 mm), CAR_vent_rear_L ([5, 354, 15] / [14, 448, 26], p95 0.0 mm)

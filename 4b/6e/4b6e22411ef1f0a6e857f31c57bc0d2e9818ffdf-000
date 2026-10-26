@@ -1,0 +1,24 @@
+# TopoCheck Topo_v389 (26 October 2026 tool)
+
+Score (faces without any error) : **0.9316** ; 103003 faces, 99.44 % quads, 512 triangles, 60 n-gons.
+
+Hard errors : non-manifold edges 0, cracks 4, flipped edges 0, bad poles 180, poles on sharp edges 284.
+
+Quads : aspect p95 7.34, corner angle deviation p95 35.3 deg, fold p95 4.96 deg ; edge length p5 / p50 / p95 [4.34, 19.05, 52.46] mm.
+
+| Category | Faces | % | Worst parts |
+|---|---|---|---|
+| ngon | 60 | 0.058 | CAR_body_bumper_front_C 8, CAR_body_under_floor_C 8, CAR_body_fender_front_R 6, CAR_body_hood_C 6 |
+| degenerate | 5 | 0.005 | CAR_body_liner 4, CAR_body_nose_fascia_C 1 |
+| nonmanifold | 0 | 0.000 |  |
+| crack | 34 | 0.033 | CAR_body_liner 34 |
+| flipped | 0 | 0.000 |  |
+| aspect | 2265 | 2.199 | CAR_body_under_floor_C 727, CAR_body_liner 290, CAR_body_shoulder_L 222, CAR_body_shoulder_R 219 |
+| angle | 1518 | 1.474 | CAR_body_liner 324, CAR_body_under_floor_C 285, CAR_body_fender_front_R 90, CAR_body_fender_front_L 90 |
+| fold | 1817 | 1.764 | CAR_body_under_floor_C 392, CAR_body_liner 166, CAR_body_door_L 103, CAR_body_door_R 102 |
+| density | 1898 | 1.843 | CAR_body_under_floor_C 909, CAR_body_tail_face_C 162, CAR_body_shoulder_rear_L 99, CAR_body_shoulder_rear_R 99 |
+| bad_pole | 1105 | 1.073 | CAR_body_under_floor_C 304, CAR_body_shoulder_L 126, CAR_body_shoulder_R 99, CAR_body_rocker_R 76 |
+| pole_on_sharp | 754 | 0.732 | CAR_body_fender_front_R 101, CAR_body_fender_front_L 101, CAR_body_quarter_L 81, CAR_body_quarter_R 81 |
+| tri | 512 | 0.497 | CAR_body_under_floor_C 204, CAR_body_shoulder_L 74, CAR_body_liner 70, CAR_body_shoulder_R 44 |
+
+Symmetry pairs 29, mismatched 1 : CAR_body_shoulder_L ([74, 4816, 4] / [44, 4839, 4], p95 0.0 mm)
