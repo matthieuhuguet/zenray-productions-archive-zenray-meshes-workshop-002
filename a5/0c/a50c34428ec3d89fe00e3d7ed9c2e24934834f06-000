@@ -1,0 +1,186 @@
+{
+ "left": {
+  "roof_centre_R": {
+   "median_px": 2.0,
+   "median_mm": 16.5,
+   "within_tol": 0.632
+  },
+  "roof_edge_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "glass_base_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.816
+  },
+  "belt_top_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.795
+  },
+  "belt_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.971
+  },
+  "door_low_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "sill_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.994
+  },
+  "fender_inner_R": {
+   "median_px": 3.0,
+   "median_mm": 24.7,
+   "within_tol": 0.304
+  },
+  "floor_edge_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.979
+  },
+  "floor_centre_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "floor_edge_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.979
+  },
+  "fender_inner_L": {
+   "median_px": 3.0,
+   "median_mm": 24.7,
+   "within_tol": 0.304
+  },
+  "sill_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.994
+  },
+  "door_low_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "belt_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.971
+  },
+  "belt_top_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.795
+  },
+  "glass_base_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.816
+  },
+  "roof_edge_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  }
+ },
+ "right": {
+  "roof_centre_R": {
+   "median_px": 1.41,
+   "median_mm": 11.7,
+   "within_tol": 0.702
+  },
+  "roof_edge_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "glass_base_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.793
+  },
+  "belt_top_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.749
+  },
+  "belt_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.971
+  },
+  "door_low_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "sill_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.994
+  },
+  "fender_inner_R": {
+   "median_px": 3.0,
+   "median_mm": 24.7,
+   "within_tol": 0.0
+  },
+  "floor_edge_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.979
+  },
+  "floor_centre_R": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "floor_edge_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.979
+  },
+  "fender_inner_L": {
+   "median_px": 3.0,
+   "median_mm": 24.7,
+   "within_tol": 0.0
+  },
+  "sill_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.994
+  },
+  "door_low_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  },
+  "belt_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.971
+  },
+  "belt_top_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.749
+  },
+  "glass_base_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 0.793
+  },
+  "roof_edge_L": {
+   "median_px": 0.0,
+   "median_mm": 0.0,
+   "within_tol": 1.0
+  }
+ }
+}

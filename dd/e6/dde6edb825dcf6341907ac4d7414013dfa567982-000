@@ -1,0 +1,38 @@
+# Audit v379 (26 October 2026 tool)
+
+| View | Silhouette filled | Raw | Lines (steps) | Lines (normal only) |
+|---|---|---|---|---|
+| front | 0.9692 | 0.9692 | 0.89 | 0.668 |
+| back | 0.9481 | 0.9481 | 0.909 | 0.883 |
+| left | 0.9782 | 0.9746 | 0.914 | 0.888 |
+| right | 0.9754 | 0.9718 | 0.918 | 0.893 |
+| top | 0.9734 | 0.9729 | 0.89 | 0.874 |
+| bottom | 0.973 | 0.9725 | 0.799 | 0.641 |
+| mean | 0.9696 | 0.9682 | 0.887 | 0.808 |
+
+## End view envelopes, worst errors (mm, model minus sheet)
+- front top H(x): x -1.05: +42, x -1.1: +40, x -0.75: +33, x -0.8: +31
+- front half width W(y): y 0.9: +29, y 0.95: +22, y 0.85: +21, y 0.15: +19
+- back top H(x): x 1.05: -41, x -1.1: -40, x -1.05: -38, x 1.1: -35
+- back half width W(y): y 0.1: -34, y 0.2: +31, y 0.05: -29, y 0.95: -26
+
+## Longest sheet lines the model misses
+- front: 1.18 m from [0.587, 1.295] to [-0.593, 1.296]
+- back: 0.39 m from [1.049, 0.035] to [1.054, 0.423]
+- back: 0.38 m from [-1.058, 0.035] to [-1.062, 0.417]
+- top: 1.15 m from [2.231, -0.631] to [2.25, 0.52]
+- top: 1.01 m from [1.959, 0.945] to [0.945, 0.985]
+- bottom: 0.78 m from [1.269, 0.7] to [0.509, 0.873]
+- bottom: 0.78 m from [1.266, -0.683] to [0.497, -0.84]
+
+## Row fit (median mm to the nearest sheet line, side views)
+- left: fender_inner_R 24.7, fender_inner_L 24.7, roof_centre_R 16.5, roof_edge_R 0.0
+- right: fender_inner_R 24.7, fender_inner_L 24.7, roof_centre_R 11.7, roof_edge_R 0.0
+
+## Surface
+- quad twist, panels over the limit: 17 ; worst: bumper_rear_C p95 38.7, bumper_front_C p95 29.5, fender_front_L p95 12.08
+- folds: 86 ; rows flagged wavy: door_low, belt, belt_top, glass_base, roof_edge
+
+![hero](/Users/zenray/.claude/tmp/tmp-zenray-meshes/versions/Audit_v379/hero.png)
+
+![board](/Users/zenray/.claude/tmp/tmp-zenray-meshes/versions/Audit_v379/board.png)
