@@ -1,0 +1,51 @@
+#!/bin/zsh
+# 25 October 2026 : ZenRay Meshes car, full component rebuild in one command : archetype cage and Houdini body (RunCar),
+# body panels export, conformal trims (TrimBuild) and openings (CarCuts), wheels reload, full export, materials render.
+# Usage: BuildCar.sh <tag>
+set -e
+W=/Users/zenray/.claude/tmp/tmp-zenray-meshes; PY=/Users/zenray/.venvs/zenray-uv/bin/python; TAG=$1; H="python3 /Users/zenray/.claude/Memory1/Houdini/MCP/zrhoudini.py hom"
+cd $W
+zsh Scripts/RunCar.sh $TAG > /dev/null
+# 25 October 2026: row loft body (uncompensated cage, fair rows, boolean arches) behind CTRL_zrm/body_method
+ZRM_NO_COMP=1 $PY -I Scripts/archetypes/ArchetypeCar.py work/car work/car/arch_loft > /dev/null
+$PY -I Scripts/RowLoft.py work/car/loft_params.json work/car/arch_loft work/car/loft_v2.npz > /dev/null
+eval $H "\"g={'LOFT':'$W/work/car/loft_v2.npz','WHEELS':'$W/work/car/wheel_params.json'}; hou.node('/obj/ZRM_Car/CTRL_zrm').parm('body_source').set(${BODY_SOURCE:-1}); hou.node('/obj/ZRM_Car/CTRL_zrm').parm('body_method').set(2); [hou.node('/obj/ZRM_Car/CTRL_zrm').parm(k).set(float(v)) for k, v in (('panel_gap', '${PANEL_GAP:-0.003}'), ('glass_inset', '${GLASS_INSET:-0.012}'), ('groove_depth', '${GROOVE:-0.012}'), ('groove_contour', '${GROOVE_C:-0.012}'), ('arch_x0', '${ARCH_X0:-0.40}'), ('arch_pad_loft', '${ARCH_PAD:-1.14}'))]; exec(open('$W/Scripts/CarLoft.py').read(), g); hou.node('/obj/ZRM_Car/IN_rowloft').cook(force=True); result=1\"" live > /dev/null
+eval $H "\"c=hou.node('/obj/ZRM_Car/CTRL_zrm'); [c.parm(k).set(0) for k in ('nose_on','tail_on') if c.parm(k)]; g={'SOP':'/obj/ZRM_Car/OUT_panels','OUT':'$W/work/car/body_panels.npz'}; exec(open('$W/Scripts/ExportNamed.py').read(), g); result=1\"" live > /dev/null   # 25 October 2026: export the UNCLIPPED body for the nose and tail builders
+# 25 October 2026: faceted nose ahead of the body cut, then trims cast on body + nose
+$PY -I Scripts/NoseFacets.py work/car/nose_params.json work/car/body_panels.npz work/car/nose_v1.npz > /dev/null
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/nose_v1.npz work/car/nose_v1.npz > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+if [ "${TAIL_METHOD:-face}" = "face" ]; then $PY -I Scripts/TailFace.py work/car/tail_face_params.json work/car/body_panels.npz work/car/tail_v1.npz > /dev/null; else $PY -I Scripts/NoseFacets.py work/car/tail_params.json work/car/body_panels.npz work/car/tail_v1.npz > /dev/null; fi   # 25 October 2026
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/tail_v1.npz work/car/tail_v1.npz 1e-6 --across > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+eval $H "\"g={'NOSE':'$W/work/car/nose_v1.npz'}; exec(open('$W/Scripts/CarNose.py').read(), g); hou.node('/obj/ZRM_Car/CTRL_zrm').parm('nose_on').set(1); g={'TAIL':'$W/work/car/tail_v1.npz'}; exec(open('$W/Scripts/CarTail.py').read(), g); hou.node('/obj/ZRM_Car/CTRL_zrm').parm('tail_on').set(${TAIL_ON:-1}); g={'SOP':'/obj/ZRM_Car/OUT_panels','OUT':'$W/work/car/body_panels.npz'}; exec(open('$W/Scripts/ExportNamed.py').read(), g); result=1\"" live > /dev/null
+$PY - <<PYEOF
+import numpy as np
+b = np.load('work/car/body_panels.npz', allow_pickle=True); n = np.load('work/car/nose_v1.npz', allow_pickle=True)
+F = [list(f) for f in b['F']]; o = len(b['P'])
+import os
+if int(os.environ.get("TAIL_ON", "1")):   # 25 October 2026: the back view tail variant joins the surface the trims are cast on
+    t = np.load('work/car/tail_v1.npz', allow_pickle=True); n = {'P': np.concatenate([n['P'], t['P']]), 'Q': list(n['Q']) + [[int(i) + len(n['P']) for i in q] for q in t['Q']]}
+for q in n['Q']:
+    q = [int(i) + o for i in q]; F += [[q[0], q[k], q[k + 1]] for k in range(1, len(q) - 1)]
+np.savez('work/car/body_nose.npz', P=np.concatenate([b['P'], n['P']]), F=np.array(F))
+PYEOF
+$PY -I Scripts/TrimBuild.py work/car/trim_params.json work/car/frame work/car/arch_v1_measure.json work/car/trims_v1.npz work/car/body_nose.npz > /dev/null
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/trims_v1.npz work/car/trims_v1.npz > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+$PY -I Scripts/ArchBuild.py work/car/arch_lip_params.json work/car/wheel_params.json work/car/body_nose.npz work/car/arch_v1.npz > /dev/null
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/arch_v1.npz work/car/arch_v1.npz > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+eval $H "\"g={'GEO':'/obj/ZRM_Car','NODE':'IN_arch_v1','NPZ':'$W/work/car/arch_v1.npz','MERGE':'car','INPUT':5}; exec(open('$W/Scripts/HouNpzSop.py').read(), g); hou.node('/obj/ZRM_Car/IN_arch_v1').cook(force=True); result=1\"" live > /dev/null
+$PY -I Scripts/WheelBuild.py work/car/wheel_params.json work/car/wheels_v2.npz > /dev/null
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/wheels_v2.npz work/car/wheels_v2.npz > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+$PY -I Scripts/ChassisBuild.py work/car/chassis_params.json work/car/wheel_params.json work/car/chassis_v1.npz > /dev/null
+[ "${TOPOFIX:-1}" = "1" ] && $PY -I Scripts/TopoFix.py work/car/chassis_v1.npz work/car/chassis_v1.npz > /dev/null   # 26 October 2026: weld and orient each component (TopoCheck)
+eval $H "\"g={'CUTS':'$W/work/car/trims_v1_cuts.json'}; exec(open('$W/Scripts/CarCuts.py').read(), g); exec(open('$W/Scripts/CarLiner.py').read(), {'hou': hou}); [hou.node('/obj/ZRM_Car/'+n).cook(force=True) for n in ('IN_trims_v1','IN_wheels_v2','IN_chassis_v1')]; g={'SOP':'/obj/ZRM_Car/OUT_car','OUT':'$W/work/car/car_$TAG.npz'}; exec(open('$W/Scripts/ExportNamed.py').read(), g); result=g['result']\"" live | python3 -c "import sys,json;print(json.load(sys.stdin).get('result'))"
+ZRM_MATERIALS=1 $PY -I Scripts/ColorViews.py work/car/car_$TAG.npz versions/Car_${TAG}_materials.png 900 > /dev/null
+ZRM_MATERIALS=1 ZRM_VIEWS=rear $PY -I Scripts/ColorViews.py work/car/car_$TAG.npz versions/Car_${TAG}_materials_rear.png 900 > /dev/null
+echo versions/Car_${TAG}_materials.png
+# side by side with the reference views (shaded model in the sheet framing), 25 October 2026
+$PY - <<PYEOF
+import numpy as np, trimesh
+d = np.load('work/car/car_$TAG.npz', allow_pickle=True); trimesh.Trimesh(d['P'], d['F'], process=False).export('work/car/car_$TAG.obj')
+PYEOF
+$PY -I Scripts/SheetScore.py work/car/frame work/car/views work/car/car_$TAG.obj versions/Car_${TAG}_vs_ref.png > /dev/null
+$PY -I Scripts/LineScore.py work/car/frame work/car/views work/car/car_$TAG.obj versions/Car_${TAG}_lines.png > work/car/lines_$TAG.json   # 25 October 2026: inner line score
+echo versions/Car_${TAG}_vs_ref.png

@@ -1,0 +1,50 @@
+# 25 October 2026 : ZenRay Meshes car, wire the faceted TAIL VARIANT (back view faithful) in Houdini behind a switch :
+# CTRL_zrm/tail_on (0 = the body tail from the plan, default ; 1 = body clipped at tail_cut_z and the facet tail shown).
+# FR : variante d'arrière fidèle à la vue arrière, derrière l'interrupteur tail_on (éteint par défaut).
+# Run with g = {"TAIL": npz path}.
+import hou, json
+W = "/Users/zenray/.claude/tmp/tmp-zenray-meshes"
+geo = hou.node("/obj/ZRM_Car"); ctrl = geo.node("CTRL_zrm"); npz = globals()["TAIL"]
+cut = json.load(open(npz.replace(".npz", "_cut.json")))["cut_z"]
+ptg = ctrl.parmTemplateGroup()
+if not ctrl.parm("tail_on"): ptg.append(hou.IntParmTemplate("tail_on", "Back View Tail (variant)", 1, default_value=(0,)))
+ptg_has_cut = ctrl.parm("tail_cut_z")
+if not ptg_has_cut: ptg.append(hou.FloatParmTemplate("tail_cut_z", "Tail Cut z (m)", 1, default_value=(cut,)))
+ctrl.setParmTemplateGroup(ptg); ctrl.parm("tail_cut_z").set(cut)   # the cut follows tail_params.json (25 October 2026)
+src = geo.node("nose_on_switch"); out = geo.node("OUT_panels")
+cl = geo.node("tail_clip") or geo.createNode("clip", "tail_clip"); cl.setInput(0, src)
+TL = json.load(open(npz.replace(".npz", "_cut.json"))).get("cut_tilt")
+if TL:   # 25 October 2026: inclined cut through (y0, z0) and (y1, z1), keeps the front side
+    import math
+    dy, dz = TL["y1"] - TL["y0"], TL["z1"] - TL["z0"]; L = math.hypot(dy, dz); n = (-dz / L, dy / L)
+    if n[1] < 0: n = (-n[0], -n[1])
+    cl.parm("originz").deleteAllKeyframes(); cl.parm("originy").set(TL["y0"]); cl.parm("originz").set(TL["z0"])
+    cl.parm("dirx").set(0); cl.parm("diry").set(n[0]); cl.parm("dirz").set(n[1]); cl.parm("clipop").set(0)
+else:
+    cl.parm("originz").setExpression('ch("../CTRL_zrm/tail_cut_z")'); cl.parm("dirx").set(0); cl.parm("diry").set(0); cl.parm("dirz").set(1); cl.parm("clipop").set(0)
+sw = geo.node("tail_on_switch") or geo.createNode("switch", "tail_on_switch")
+sw.setInput(0, src); sw.setInput(1, cl); sw.parm("input").setExpression('ch("../CTRL_zrm/tail_on")'); out.setInput(0, sw)
+g = {"GEO": "/obj/ZRM_Car", "NODE": "IN_tail_v1", "NPZ": npz, "MERGE": "car", "INPUT": 6}
+exec(open(W + "/Scripts/HouNpzSop.py").read(), g)
+tn = geo.node("IN_tail_v1"); em = geo.node("tail_empty") or geo.createNode("null", "tail_empty")
+vis = geo.node("tail_vis") or geo.createNode("switch", "tail_vis")
+vis.setInput(0, em); vis.setInput(1, tn); vis.parm("input").setExpression('ch("../CTRL_zrm/tail_on")')
+geo.node("car").setInput(6, vis); tn.cook(force=True)
+for n_ in (cl, sw, em, vis): n_.moveToGoodPosition()
+result = {"tail_prims": len(tn.geometry().prims()), "errors": cl.errors() + tn.errors()}
+# 25 October 2026: the tail face is cut by the wheel arch cylinders too (a cut ahead of the arch rear edge covered the tyres)
+cyl = geo.node("loft_arch_cyl")
+if cyl is not None:
+    tb = geo.node("tail_arch_cut") or geo.createNode("boolean::2.0", "tail_arch_cut"); tb.setInput(0, tn)
+    for pn, v in (("booleanop", "subtract"), ("asurface", "surface"), ("bsurface", "solid")):
+        if tb.parm(pn):
+            try: tb.parm(pn).set(v)
+            except Exception: pass
+    best = None
+    for b_ in (cyl, geo.node("loft_arch_cyl_rev")):
+        tb.setInput(1, b_); n_ = len(tb.geometry().prims())
+        if best is None or n_ > best[0]: best = (n_, b_)
+    tb.setInput(1, best[1]); vis.setInput(1, tb); tb.moveToGoodPosition()
+    # 26 October 2026: TailFace leaves out the quads inside the arch cylinders itself (arch_clear) ; the Boolean SOP, which
+    # triangulated and re-merged the whole face (58 pentagons, cracks), is bypassed. FR : booléen court-circuité.
+    tb.bypass(True)

@@ -1,0 +1,97 @@
+# 26 October 2026 : ZenRay Meshes, TOPOFIX, the repair half of the retopology step (TopoCheck is the judge) : on a
+# component npz (P, Q polygons, names per polygon), per part : WELD points at the same place (unwelded seams are cracks),
+# drop polygons that collapse, ORIENT every connected piece consistently (breadth first over shared edges, the majority
+# winding of the piece is kept), and a closed piece outward (positive signed volume). Parts stay separate shells.
+# FR : réparation de topologie par pièce : soudure, faces effondrées, orientation cohérente (vers l'extérieur si fermé).
+# Usage: python TopoFix.py <in.npz> <out.npz> [weld_tol_m=1e-7] [--across]
+#        python TopoFix.py --selftest
+import sys, json
+from collections import defaultdict, deque
+import numpy as np
+
+
+def weld(P, Q, N, tol=1e-7, across=False):
+    """across : weld coincident points whatever their part (26 October 2026, a component made of one grid whose parts share
+    points, the tail face and its insets ; clamped rows left coincident points, TopoCheck cracks)."""
+    key, remap, P2 = {}, np.empty(len(P), np.int64), []
+    pn = [None] * len(P)
+    for q, n in zip(Q, N):
+        for v in q: pn[v] = n
+    for i, p in enumerate(P):
+        k = (None if across else pn[i],) + tuple(int(round(c / tol)) for c in p)
+        if k not in key: key[k] = len(P2); P2.append(p)
+        remap[i] = key[k]
+    Q2, N2 = [], []
+    for q, n in zip(Q, N):
+        q2 = [int(remap[v]) for v in q]; q3 = [v for k_, v in enumerate(q2) if v != q2[k_ - 1]]   # drop repeated corners
+        if len(set(q3)) >= 3: Q2.append(q3); N2.append(n)
+    return np.array(P2, float), Q2, N2
+
+
+def orient(P, Q, N):
+    """consistent winding per connected piece of each part ; majority kept ; closed pieces outward."""
+    Q = [list(q) for q in Q]; edge_f = defaultdict(list)
+    for fi, q in enumerate(Q):
+        for k in range(len(q)): edge_f[(min(q[k], q[k - 1]), max(q[k], q[k - 1]))].append(fi)
+    seen = np.zeros(len(Q), bool); flips = 0
+    def directed(q): return {(q[k - 1], q[k]) for k in range(len(q))}
+    for s in range(len(Q)):
+        if seen[s]: continue
+        comp, flip = [s], {s: False}; seen[s] = True; dq = deque([s])
+        while dq:
+            f = dq.popleft(); qf = Q[f][::-1] if flip[f] else Q[f]; df = directed(qf)
+            for k in range(len(qf)):
+                e = (min(qf[k], qf[k - 1]), max(qf[k], qf[k - 1]))
+                for g in edge_f[e]:
+                    if g == f or seen[g] or N[g] != N[f] or len(edge_f[e]) != 2: continue
+                    same = (qf[k - 1], qf[k]) in directed(Q[g])   # same direction on the shared edge = inconsistent
+                    flip[g] = same; seen[g] = True; comp.append(g); dq.append(g)
+        nflip = sum(flip[f] for f in comp)
+        invert = nflip > len(comp) / 2   # keep the majority winding
+        # closed piece : outward by the signed volume
+        ec = defaultdict(int)
+        for f in comp:
+            q = Q[f]
+            for k in range(len(q)): ec[(min(q[k], q[k - 1]), max(q[k], q[k - 1]))] += 1
+        if all(c == 2 for c in ec.values()):
+            vol = 0.0
+            for f in comp:
+                q = Q[f][::-1] if flip[f] else Q[f]
+                for k in range(1, len(q) - 1): vol += np.dot(P[q[0]], np.cross(P[q[k]], P[q[k + 1]])) / 6.0
+            invert = vol < 0
+        for f in comp:
+            if flip[f] != invert: Q[f] = Q[f][::-1]; flips += 1
+    return Q, flips
+
+
+def fix(P, Q, N, tol=1e-7, across=False):
+    P2, Q2, N2 = weld(np.asarray(P, float), [list(map(int, q)) for q in Q], list(N), tol, across)
+    Q3, flips = orient(P2, Q2, N2)
+    return P2, Q3, N2, {"points_in": len(P), "points_out": len(P2), "polys_in": len(Q), "polys_out": len(Q3), "flipped": flips}
+
+
+def save(out, P, Q, N):
+    if all(len(q) == 4 for q in Q): np.savez(out, P=np.asarray(P, np.float32), Q=np.array(Q, np.int32), names=np.array(N))
+    else: np.savez(out, P=np.asarray(P, np.float32), Q=np.array([np.array(q) for q in Q], dtype=object), names=np.array(N))
+
+
+def selftest():
+    # a cube of 6 quads with one face flipped and one corner duplicated : after fix, closed, outward, welded
+    V = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], float)
+    Q = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [2, 3, 7, 6], [1, 2, 6, 5], [0, 4, 7, 3]]
+    P = np.vstack([V, V[[6]]]); Qb = [list(q) for q in Q]; Qb[1] = [4, 5, 8, 7][::-1]   # duplicate of point 6 and a flipped face
+    P2, Q2, N2, st = fix(P, Qb, ["CAR_cube_C"] * 6)
+    vol = sum(np.dot(P2[q[0]], np.cross(P2[q[k]], P2[q[k + 1]])) / 6.0 for q in Q2 for k in range(1, len(q) - 1))
+    ok = len(P2) == 8 and abs(vol - 1.0) < 1e-9 and st["flipped"] >= 1
+    # inside out cube : every face flipped, the fix turns it outward
+    P3, Q3, _, st3 = fix(V, [q[::-1] for q in Q], ["CAR_cube_C"] * 6)
+    vol3 = sum(np.dot(P3[q[0]], np.cross(P3[q[k]], P3[q[k + 1]])) / 6.0 for q in Q3 for k in range(1, len(q) - 1))
+    ok3 = abs(vol3 - 1.0) < 1e-9
+    print(json.dumps({"weld_and_flip": bool(ok), "inside_out": bool(ok3), "ok": bool(ok and ok3)})); return 0 if ok and ok3 else 1
+
+
+if __name__ == "__main__":
+    if "--selftest" in sys.argv: sys.exit(selftest())
+    args_ = [a for a in sys.argv[1:] if not a.startswith("--")]
+    d = np.load(args_[0], allow_pickle=True); tol = float(args_[2]) if len(args_) > 2 else 1e-7
+    P2, Q2, N2, st = fix(d["P"], d["Q"], d["names"], tol, "--across" in sys.argv); save(args_[1], P2, Q2, N2); print(json.dumps(st))

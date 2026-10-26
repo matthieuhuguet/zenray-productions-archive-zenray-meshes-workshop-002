@@ -1,0 +1,75 @@
+# 26 October 2026 : ZenRay Meshes car, BODY LINER behind the panel joints. Every joint is a V groove between two panels
+# extruded panel_thick inward, which leaves a 3 mm slit through the shell : seen edge on, the background shows through the
+# car (583 to 1266 px of holes per side view). A liner, the pre gap body surface offset inward by panel_thick + liner_gap
+# along its point normals, closes every slit ; controls liner_on and liner_gap on CTRL_zrm. FR : doublure derrière les joints.
+# Usage (Houdini, live): exec(open('.../CarLiner.py').read(), {'hou': hou})
+geo = hou.node('/obj/ZRM_Car'); ctrl = geo.node('CTRL_zrm')
+tg = ctrl.parmTemplateGroup()
+for n_, l_, v_ in (("liner_on", "Body Liner Behind Joints (0 or 1)", 1.0), ("liner_gap", "Liner Gap Behind Panels (m)", 0.0015), ("liner_band", "Liner Only Behind Joints (0 or 1)", 1.0)):
+    if ctrl.parm(n_) is None:
+        tg.append(hou.FloatParmTemplate(n_, l_, 1, default_value=(v_,))); ctrl.setParmTemplateGroup(tg); tg = ctrl.parmTemplateGroup()
+# 26 October 2026: the merge "car" had kept about 170 empty inputs from liner_off (each rebuild destroyed liner_switch and
+# Houdini rewired its merge slot to liner_off) ; those inputs are removed before the rebuild. FR : entrées vides retirées.
+_car = geo.node('car')
+if _car is not None:
+    _keep = [i for i in _car.inputs() if i is not None and i.name() not in ("liner_off", "liner_switch")]
+    for _k in range(len(_car.inputs()) - 1, -1, -1): _car.setInput(_k, None)
+    for _k, _i in enumerate(_keep): _car.setInput(_k, _i)
+for nm in ("liner_normals", "liner_offset", "liner_joint_pts", "liner_joint_grow", "liner_name", "liner_fuse", "liner_reverse", "liner_switch"):
+    if geo.node(nm): geo.node(nm).destroy()
+src = geo.node('panel_cuts')
+nr = geo.createNode('normal', 'liner_normals'); nr.setInput(0, src)
+if nr.parm('type'): nr.parm('type').set(0)   # point normals
+wo = geo.createNode('attribwrangle', 'liner_offset'); wo.setInput(0, nr); wo.parm('class').set(2)
+wo.parm('snippet').set('''// 26 October 2026 : liner, the body surface pushed inward behind the panels (panel_thick + liner_gap)
+@P -= normalize(v@N) * (chf("../CTRL_zrm/panel_thick") + chf("../CTRL_zrm/liner_gap"));
+s@name = "CAR_body_liner";''')
+# a primitive name too (exports read primitive names)
+# 26 October 2026: the liner is taken before the nose and tail cuts ; it is clipped at the cut planes (read from the
+# builders' cut files), a little inside, or it stood out behind the tail face (back view lines 0.767 -> 0.482)
+import json as _json, os as _os
+_W = '/Users/zenray/.claude/tmp/tmp-zenray-meshes/work/car'
+_zmax = _json.load(open(_os.path.join(_W, 'nose_v1_cut.json'))).get('cut_z', 9.0) - 0.01
+_zmin = _json.load(open(_os.path.join(_W, 'tail_v1_cut.json'))).get('cut_z', -9.0) + 0.01
+for n_, v_ in (("liner_z_min", _zmin), ("liner_z_max", _zmax)):
+    if ctrl.parm(n_) is None:
+        tg = ctrl.parmTemplateGroup(); tg.append(hou.FloatParmTemplate(n_, n_.replace('_', ' ').title() + ' (m)', 1, default_value=(v_,))); ctrl.setParmTemplateGroup(tg)
+    ctrl.parm(n_).set(v_)
+# 26 October 2026: LINER BAND ; the liner only has to close the joint slits : a whole offset copy of the body put 34 000
+# hidden quads in the model (TopoCheck). Points where two panels meet are joint points, grown by one ring ; with
+# liner_band 1 only the liner faces touching them stay. FR : doublure limitée à une bande derrière les joints.
+jp = geo.createNode('attribwrangle', 'liner_joint_pts'); jp.setInput(0, wo); jp.parm('class').set(2)
+jp.parm('snippet').set('''// 26 October 2026 : joint point = its faces carry more than one panel name
+int pr[] = pointprims(0, @ptnum); string p0 = ""; int j = 0;
+foreach (int q; pr) { string s = prim(0, "panel", q); if (p0 == "") p0 = s; else if (s != p0) j = 1; }
+// 26 October 2026 : an open border (opening, cut) is a hole the liner closes too : boundary point = more neighbours than faces
+if (len(neighbours(0, @ptnum)) != len(pr)) j = 1;
+i@ljoint = j;''')
+jg = geo.createNode('attribwrangle', 'liner_joint_grow'); jg.setInput(0, jp); jg.parm('class').set(2)
+jg.parm('snippet').set('''// 26 October 2026 : one ring around the joint points
+int g = i@ljoint; int nb[] = neighbours(0, @ptnum);
+foreach (int k; nb) if (point(0, "ljoint", k)) g = 1;
+i@ljoint2 = g;''')
+wn = geo.createNode('attribwrangle', 'liner_name'); wn.setInput(0, jg); wn.parm('class').set(1)
+wn.parm('snippet').set('''s@name = "CAR_body_liner";   // 26 October 2026
+if (@P.z > chf("../CTRL_zrm/liner_z_max") || @P.z < chf("../CTRL_zrm/liner_z_min")) removeprim(0, @primnum, 1);
+// 26 October 2026: no liner behind the glass : the 13.5 mm inset gap around each window is the window outline the sheet draws
+if (startswith(s@panel, "glass")) removeprim(0, @primnum, 1);
+if (chf("../CTRL_zrm/liner_band") > 0.5) { int pts[] = primpoints(0, @primnum); int keep = 0; foreach (int q; pts) if (point(0, "ljoint2", q)) keep = 1; if (!keep) removeprim(0, @primnum, 1); }''')
+# 26 October 2026: the liner faces INWARD (reversed winding) : seen through a joint it is a back face, dark like the inside
+# of a car, so the joint still reads as a line (outward, it took the body's shade and the top view lost its seams)
+# 26 October 2026: the liner comes from the body already split in panels, so its points are doubled along every joint
+# (TopoCheck : 242 cracks) ; one Fuse on the liner alone welds them. FR : soudure de la doublure.
+fu = geo.createNode('fuse::2.0', 'liner_fuse') if hou.nodeType(hou.sopNodeTypeCategory(), 'fuse::2.0') else geo.createNode('fuse', 'liner_fuse')
+fu.setInput(0, wn)
+for pn_, v_ in (("tol3d", 1e-5), ("dist", 1e-5)):
+    if fu.parm(pn_): fu.parm(pn_).set(v_)
+rv = geo.node('liner_reverse') or geo.createNode('reverse', 'liner_reverse'); rv.setInput(0, fu)
+sw = geo.createNode('switch', 'liner_switch'); sw.setInput(0, geo.createNode('null', 'liner_off') if geo.node('liner_off') is None else geo.node('liner_off')); sw.setInput(1, rv)
+sw.parm('input').setExpression('ch("../CTRL_zrm/liner_on") > 0.5')
+car = geo.node('car')
+if sw not in [i for i in car.inputs() if i]: car.setInput(len(car.inputs()), sw)
+for n_ in (nr, wo, jp, jg, wn, fu, sw): n_.moveToGoodPosition()
+car.cook(force=True)
+gl = wn.geometry()
+result = {"liner_prims": len(gl.prims()), "car_inputs": [i.name() if i else None for i in car.inputs()], "errors": [n.name() + ": " + " ".join(n.errors()) for n in (nr, wo, wn, sw) if n.errors()]}

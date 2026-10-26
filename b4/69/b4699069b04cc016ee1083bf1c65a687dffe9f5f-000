@@ -1,0 +1,236 @@
+# 25 October 2026 : ZenRay Meshes, CHASSIS and detail components (clean quads, named) : wheel wells (arch liners),
+# brake discs and calipers, mirrors, underbody tunnel and bolt heads, suspension arms. All values in
+# work/car/chassis_params.json (HDA interface) ; positions from the measured axles in wheel_params.json.
+# FR : coques de passage, freins, rétroviseurs, tunnel, boulons, triangles ; valeurs dans un JSON.
+# Usage: python ChassisBuild.py <chassis_params.json> <wheel_params.json> <out.npz>
+import sys, os, json, math
+import numpy as np
+sys.path.insert(0, __import__("os").path.dirname(__import__("os").path.abspath(__file__)))
+from WheelBuild import Mesh, revolve, quad_disc
+import WheelBuild as WB
+
+
+def capped_disc(m, centre, axis_map, radius, segs, name, flip=False):
+    """26 October 2026: a flat quad disc (inset square and ring) instead of a revolve from radius 0 or a fan of quads
+    around a centre point (a pole of valence segs, collapsed quads or triangles, TopoCheck). axis_map(P) maps the local
+    disc points (axial, r cos, r sin) to world offsets. FR : disque plat en quads au lieu d'un éventail."""
+    dP, dQ = quad_disc(segs, radius, lambda r: 0.0); m.quads(axis_map(dP) + centre, dQ, name, flip=flip)
+
+
+def coons_patch(poly, target, counts=None):
+    """26 October 2026: COONS PATCH, the basic retopology primitive : a convex polygon (2D points, any count) filled with a
+    regular quad grid ; the four corners with the sharpest turn become the patch corners, the boundary between them gives
+    four chains resampled by arc length (opposite chains share their count), the inside is the Coons blend. Returns the
+    grid (nu + 1, nv + 1, 2), its boundary loop (closed, counter clockwise like poly) and the counts. Replaces a fan of
+    quads around the centre (pole of valence n). FR : patch de Coons, remplissage en quads d'un polygone convexe."""
+    P = np.asarray(poly, float); n = len(P)
+    turn = []
+    for i in range(n):
+        u, w = P[i] - P[i - 1], P[(i + 1) % n] - P[i]
+        turn.append(abs(np.arctan2(u[0] * w[1] - u[1] * w[0], u @ w)))
+    # 26 October 2026: corners = the four vertices spanning the largest quadrilateral (a chamfered rectangle has eight equal
+    # turns of 45 degrees ; the four sharpest were an arbitrary pick and folded the patch) ; FR : coins du plus grand quadrilatère
+    if n > 4:
+        import itertools
+        area4 = lambda c4: 0.5 * abs(sum(P[c4[k]][0] * P[c4[(k + 1) % 4]][1] - P[c4[(k + 1) % 4]][0] * P[c4[k]][1] for k in range(4)))
+        cs = list(max(itertools.combinations(range(n), 4), key=lambda c4: (round(area4(c4), 9), sum(turn[k] for k in c4))))
+    else:
+        cs = list(range(4))
+    chains = []
+    for k in range(4):
+        i0, i1 = cs[k], cs[(k + 1) % 4]; idx = [i0]
+        while idx[-1] != i1: idx.append((idx[-1] + 1) % n)
+        chains.append(P[idx])
+    L = [float(np.linalg.norm(np.diff(c_, axis=0), axis=1).sum()) for c_ in chains]
+    nu, nv = counts if counts else (max(1, int(round(max(L[0], L[2]) / target))), max(1, int(round(max(L[1], L[3]) / target))))
+    def resample(c_, k_):
+        d_ = np.concatenate([[0], np.cumsum(np.linalg.norm(np.diff(c_, axis=0), axis=1))]); t_ = np.linspace(0, d_[-1], k_ + 1)
+        return np.stack([np.interp(t_, d_, c_[:, 0]), np.interp(t_, d_, c_[:, 1])], 1)
+    C0, C1, C2, C3 = resample(chains[0], nu), resample(chains[1], nv), resample(chains[2], nu)[::-1], resample(chains[3], nv)[::-1]
+    G = np.zeros((nu + 1, nv + 1, 2))
+    for i in range(nu + 1):
+        u = i / nu
+        for j in range(nv + 1):
+            v = j / nv
+            G[i, j] = (1 - v) * C0[i] + v * C2[i] + (1 - u) * C3[j] + u * C1[j] - ((1 - u) * (1 - v) * C0[0] + u * (1 - v) * C0[-1] + (1 - u) * v * C2[0] + u * v * C2[-1])
+    loop = np.concatenate([G[:, 0], G[-1, 1:], G[-2::-1, -1], G[0, -2:0:-1]])
+    return G, loop, (nu, nv)
+
+
+def bolt_head(m, centre, name, r=0.012, h=0.006, segs=8):
+    """26 October 2026: bolt head as a closed welded cylinder : quad disc top and bottom, one side ring (axis y)."""
+    yx = lambda Pl: Pl[:, [1, 0, 2]]
+    capped_disc(m, np.asarray(centre, float), yx, r, segs, name, flip=True)
+    side = revolve(np.array([(0.0, r), (-h, r)]), segs)[..., [1, 0, 2]] + np.asarray(centre, float); m.grid(side, name, close_u=True)
+    capped_disc(m, np.asarray(centre, float) + [0, -h, 0], yx, r, segs, name)
+
+
+def tube(m, a, b, r, name, sides=8):
+    """straight tube between a and b as a quad ring grid (two rings)."""
+    a, b = np.array(a, float), np.array(b, float); d = b - a; d /= np.linalg.norm(d)
+    n = np.cross(d, [0, 1, 0]); n = n if np.linalg.norm(n) > 1e-3 else np.cross(d, [1, 0, 0]); n /= np.linalg.norm(n); bb = np.cross(d, n)
+    t = np.linspace(0, 2 * np.pi, sides, endpoint=False)
+    ring = lambda c: c + r * (np.cos(t)[:, None] * n + np.sin(t)[:, None] * bb)
+    m.grid(np.stack([ring(a), ring(b)], 1), name, close_u=True)
+
+
+def box(m, c, s, name):
+    c, s = np.array(c, float), np.array(s, float) / 2
+    for ax in range(3):
+        for sg in (-1, 1):
+            u, v = [k for k in range(3) if k != ax]
+            G = np.zeros((2, 2, 3))
+            for i, du in enumerate((-1, 1)):
+                for j, dv in enumerate((-1, 1)):
+                    p = c.copy(); p[ax] += sg * s[ax]; p[u] += du * s[u]; p[v] += dv * s[v]; G[i, j] = p
+            m.grid(G, name, flip=(sg < 0) ^ (ax == 1))
+
+
+def rounded_box(m, c, s, name, e=0.35, nu=24, nv=12):
+    """26 October 2026: superellipsoid housing (exponent e : 1 = ellipsoid, toward 0 = box with rounded edges) ; the
+    mirror box read as a crude block. FR : coque arrondie (super-ellipsoïde) au lieu d'une boîte."""
+    c, s = np.array(c, float), np.array(s, float) / 2
+    sp = lambda w, ee: np.sign(w) * np.abs(w) ** ee
+    u = np.linspace(-np.pi, np.pi, nu, endpoint=False); v = np.linspace(-np.pi / 2, np.pi / 2, nv)
+    G = np.zeros((nu, nv, 3))
+    for i, uu in enumerate(u):
+        for j, vv in enumerate(v):
+            G[i, j] = c + s * np.array([sp(np.cos(vv), e) * sp(np.cos(uu), e), sp(np.sin(vv), e), sp(np.cos(vv), e) * sp(np.sin(uu), e)])
+    m.grid(G, name, close_u=True)
+
+
+def main(cparams, wparams, out):
+    C = json.load(open(cparams)); W = json.load(open(wparams)); m = Mesh(); hwf = None
+    WB.REFINE["max_aspect"] = float(C.get("revolve_max_aspect", 3.0))   # 26 October 2026: brake discs, radial quads not longer than 3 x their width
+    mp = os.path.join(os.path.dirname(os.path.abspath(cparams)), C.get("measure", "arch_v1_measure.json"))
+    if os.path.exists(mp):
+        pr = json.load(open(mp))["profiles"]; zs_, hw_ = np.array(pr["z"]), np.array(pr["hw"])
+        hwf = lambda zz: float(np.interp(-zz, -zs_, hw_))
+    for inst in W["instances"]:
+        s = 1 if inst["x"] > 0 else -1; c = np.array([inst["x"], inst["y"], inst["z"]]); tag = inst["tag"]
+        # wheel well : half cylinder liner above the tyre (angles from front to back over the top), inside facing
+        R = W["tyre_r"] + C["well_clearance"]; w = W["tyre_w"] / 2 + C["well_side"]; seg = C["well_segments"]
+        ang = np.linspace(math.radians(C["well_from_deg"]), math.radians(C["well_to_deg"]), seg)
+        # the liner spans from inboard of the tyre to the tyre's OUTER face only (it poked out of the body in plan, 25 October 2026)
+        G = np.stack([np.stack([np.full(seg, c[0] + dx), c[1] + R * np.sin(ang), c[2] + R * np.cos(ang)], 1) for dx in (-s * w, s * (W["tyre_w"] / 2 - 0.01))], 1)
+        if hwf is not None:   # 25 October 2026: the liner never shows past the body in plan (top view half width at its z)
+            lim = np.array([hwf(zz) for zz in G[..., 2].ravel()]).reshape(G.shape[:2]) - C.get("well_plan_margin", 0.02)
+            G[..., 0] = np.sign(G[..., 0]) * np.minimum(np.abs(G[..., 0]), np.maximum(lim, abs(c[0]) - w))
+        G[..., 1] = np.maximum(G[..., 1], C.get("well_min_y", 0.0))   # 25 October 2026: floor bound, 0 by default (the dark arch belongs to the sheet silhouette, 0.18 lost 0.3 % IoU)
+        m.grid(G, "CAR_wheelwell_" + tag, flip=s < 0)
+        if C.get("well_inner_wall", 1):   # 25 October 2026: closes the opened arch from inside (the loft body is a hollow shell)
+            Rw = W["tyre_r"] * C.get("well_wall_pad", 1.12); t_ = np.linspace(0, 2 * np.pi, seg * 2)
+            xw = c[0] - s * w; ring = np.stack([np.full(len(t_), xw), np.maximum(c[1] + Rw * np.sin(t_), C.get("well_min_y", 0.0)), c[2] + Rw * np.cos(t_)], 1)
+            if C.get("well_wall_disc", 1):   # 26 October 2026: quad disc (the fan around a centre made 47 triangles and a pole of valence 48)
+                dP, dQ = quad_disc(len(t_), Rw, lambda r: 0.0)
+                wP = np.stack([np.full(len(dP), xw), np.maximum(c[1] + dP[:, 2], C.get("well_min_y", 0.0)), c[2] + dP[:, 1]], 1)
+                n_ref = np.cross(ring[1] - ring[0], [xw, c[1], c[2]] - ring[0]); q0 = dQ[0]; n_new = np.cross(wP[q0[1]] - wP[q0[0]], wP[q0[3]] - wP[q0[0]])
+                m.quads(wP, dQ, "CAR_wheelwell_" + tag, flip=bool((np.dot(n_ref, n_new) < 0) != (s > 0)))
+            else:
+                ctr = np.repeat(np.array([[xw, c[1], c[2]]]), len(t_), 0)
+                m.grid(np.stack([ctr, ring], 1), "CAR_wheelwell_" + tag, close_u=True, flip=s > 0)
+        # brake disc (behind the spokes) and caliper
+        dx_disc = s * (W["face_x"] - C["disc_inset"])
+        disc = revolve(np.array([(0, C["disc_r"] * 0.35), (0, C["disc_r"]), (-C["disc_t"], C["disc_r"]), (-C["disc_t"], C["disc_r"] * 0.35)]), 48)
+        disc[..., 0] = disc[..., 0] * s + c[0] + dx_disc; disc[..., 1] += c[1]; disc[..., 2] += c[2]
+        m.grid(disc, "CAR_wheel_brake_disc_" + tag, close_u=True, flip=s < 0)
+        a = math.radians(C["caliper_deg"]); cc = c + [dx_disc - s * 0.01, C["disc_r"] * 0.85 * math.sin(a), C["disc_r"] * 0.85 * math.cos(a)]
+        box(m, cc, (C["caliper_size"][0], C["caliper_size"][1], C["caliper_size"][2]), "CAR_wheel_brake_caliper_" + tag)
+        # suspension: two wishbone arms (tubes) from the hub to the floor, front and back pick up points
+        hub = c + [-s * 0.12, 0, 0]
+        for k, dy in enumerate((-0.08, 0.10)):
+            for dz in (-C["arm_spread"], C["arm_spread"]):
+                tube(m, hub + [0, dy, 0], [s * C["arm_inner_x"], c[1] + dy * 0.6, c[2] + dz], C["arm_r"], "CAR_susp_%s_%s" % ("front" if inst["z"] > 0 else "rear", tag))
+    # mirrors (stalk + housing) at the A pillar base, both sides
+    # 26 October 2026: mirror_on 0 by default ; the sheet has NO mirrors (none in the side and top views), the "ears" of the
+    # front view are the rear shoulders seen past the front fenders
+    for s, tag in (((1, "L"), (-1, "R")) if C.get("mirror_on", 0) else ()):
+        x, y, z = C["mirror_pos"]; x *= s
+        if C.get("mirror_round", 1): rounded_box(m, (x, y, z), C["mirror_size"], "CAR_mirror_" + tag, C.get("mirror_exp", 0.35))
+        else: box(m, (x, y, z), C["mirror_size"], "CAR_mirror_" + tag)
+        tube(m, (x - s * C["mirror_size"][0] * 0.4, y - 0.02, z), (x - s * (C["mirror_size"][0] * 0.5 + C["mirror_stalk"]), y - 0.06, z + 0.02), 0.012, "CAR_mirror_" + tag)
+    # underbody tunnel (raised V plate along the centre) and bolt heads on the floor
+    zt0, zt1 = C["tunnel_z"]; hw = C["tunnel_half_w"]; y0 = C["floor_y"] - 0.004
+    bn = os.path.join(os.path.dirname(os.path.abspath(cparams)), "body_nose.npz")
+    if C.get("floor_from_body", 1) and os.path.exists(bn):   # 25 October 2026: the loft floor sits at 0.121, under the parts at 0.146
+        Pb = np.load(bn)["P"]; mid = Pb[(np.abs(Pb[:, 0]) < 0.5) & (Pb[:, 2] > -1.0) & (Pb[:, 2] < 1.0)]
+        if len(mid): y0 = float(mid[:, 1].min()) - C.get("under_offset", 0.004)
+    if C.get("floor_body_y_fixed") is not None:   # 26 October 2026: frozen, the retopology of the floor must not move the plates (v375)
+        y0 = float(C["floor_body_y_fixed"]) - C.get("under_offset", 0.004)
+    G = np.array([[[-hw, y0, zt1], [hw, y0, zt1]], [[-hw * 0.4, y0, zt0], [hw * 0.4, y0, zt0]]])
+    m.grid(G, "CAR_under_tunnel_C", flip=True)
+    for i, zb in enumerate(np.linspace(C["bolts_z"][0], C["bolts_z"][1], C["bolts_n"])):
+        for xb in C["bolts_x"]:
+            for sx in (1, -1):
+                bolt_head(m, [sx * xb, y0, zb], "CAR_under_bolt")   # 26 October 2026: closed quad cylinder
+    # UNDER PLATES (25 October 2026): convex polygons read in bottom view pixels (central bolted plate, arrow, front and rear
+    # chevron plates), extruded down as thin slabs under the floor (layer k sits k x plate_step lower) ; bolt heads at px points
+    if C.get("plates") or C.get("bolts_px"):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from DesignCurves import to_world
+        meta = json.load(open(os.path.join(os.path.dirname(os.path.abspath(cparams)), "frame/frame.json")))
+        def w2(px, py):
+            a, u, b, ww = to_world(meta, "bottom", np.array([float(px)]), np.array([float(py)])); d_ = {a: float(u[0]), b: float(ww[0])}
+            return d_.get("x", 0.0) - x_axis, d_.get("z", 0.0)
+        ray_b = None
+        if os.path.exists(bn):   # 26 October 2026: the body for the plate clamp
+            import trimesh
+            _bd = np.load(bn); ray_b = trimesh.ray.ray_triangle.RayMeshIntersector(trimesh.Trimesh(_bd["P"], _bd["F"], process=False))
+        x_axis = 0.0; a0, u0, b0, w0 = to_world(meta, "bottom", np.array([300.0]), np.array([float(C.get("axis_py", 197))]))
+        x_axis = float(u0[0]) if a0 == "x" else float(w0[0])   # 25 October 2026: symmetry axis of the bottom panel (arrow centre)
+        for nm, pl in C.get("plates", {}).items():
+            yt = pl["y_top_m"] if "y_top_m" in pl else y0 - pl.get("layer", 1) * C.get("plate_step", 0.006); yb = yt - pl.get("thick", 0.006)   # 26 October 2026: y_top_m, a plate under the raised tail (diffuser lip) sits at its own height
+            pts = [w2(*q) for q in pl["px"]]
+            # 26 October 2026: BODY CLAMP ; the side slots read on the bottom view reached |x| 1.06 at y 0.14 where the rocker
+            # side is at 0.93 : 10 cm needles out of the body, seen in the top and bottom views. Each plate point stays
+            # clamp_margin_m inside the body side measured by a ray along -x at its height. FR : plaques bornées au flanc.
+            if pl.get("clamp_body", C.get("plate_body_clamp", 0)) and ray_b is not None:   # 26 October 2026: per plate (global clamp lost 0.03 of bottom lines)
+                cl_ = []
+                for (px_, pz_) in pts:
+                    loc_, _, _ = ray_b.intersects_location(np.array([[3.0 * (1 if px_ >= 0 else -1), yt, pz_]]), np.array([[-1.0 if px_ >= 0 else 1.0, 0, 0]]), multiple_hits=False)
+                    lim_ = abs(float(loc_[0, 0])) - C.get("clamp_margin_m", 0.015) if len(loc_) else abs(px_)
+                    cl_.append((float(np.sign(px_) * min(abs(px_), lim_)), pz_))
+                pts = cl_
+            cx = np.mean([p_[0] for p_ in pts]); cz = np.mean([p_[1] for p_ in pts]); n_ = len(pts)
+            bev = pl.get("bevel", C.get("plate_bevel", 0.012)); rad = np.mean([np.hypot(p_[0] - cx, p_[1] - cz) for p_ in pts])
+            sh = max(1 - bev / max(rad, 1e-3), 0.5); ptsb = [(cx + (p_[0] - cx) * sh, cz + (p_[1] - cz) * sh) for p_ in pts]
+            if C.get("plate_coons", 1):   # 26 October 2026: caps as Coons quad patches, walls on the same boundary loops
+                tq_ = C.get("plate_quad_m", 0.04); Gb_, Lb_, cnt_ = coons_patch(ptsb, tq_); Gt_, Lt_, _ = coons_patch(pts, tq_, cnt_)
+                lift = lambda G2_, yy_: np.concatenate([G2_[..., :1], np.full(G2_.shape[:-1] + (1,), yy_), G2_[..., 1:]], -1)
+                m.grid(lift(Gb_, yb), nm, flip=True); m.grid(lift(Gt_, yt), nm, flip=False)
+                m.grid(np.stack([lift(Lt_, yt), lift(Lb_, yb)], 1), nm, close_u=True)
+                continue
+            for yy, flip, pp in ((yb, True, ptsb), (yt, False, pts)):
+                for i in range(n_):
+                    a_, b_ = pp[i], pp[(i + 1) % n_]; mid = ((a_[0] + b_[0]) / 2, (a_[1] + b_[1]) / 2)
+                    # 26 October 2026: cyclic order centre, a, mid, b ; (centre, a, b, mid) folded its second triangle back
+                    # over the first (flipped normals, an X of false lines once the plates showed from below)
+                    G = np.array([[[cx, yy, cz], [a_[0], yy, a_[1]]], [[b_[0], yy, b_[1]], [mid[0], yy, mid[1]]]])
+                    m.grid(G, nm, flip=flip)
+            for i in range(n_):   # bevelled side walls (a vertical wall makes no visible line from below)
+                a_, b_ = pts[i], pts[(i + 1) % n_]; c_, d2 = ptsb[i], ptsb[(i + 1) % n_]
+                m.grid(np.array([[[a_[0], yt, a_[1]], [c_[0], yb, c_[1]]], [[b_[0], yt, b_[1]], [d2[0], yb, d2[1]]]]), nm)
+        for k, (px, py) in enumerate(C.get("bolts_px", [])):
+            xb, zb = w2(px, py); yb_ = y0 - C.get("plate_step", 0.006) - C.get("bolt_on_plate", 0.006)
+            bolt_head(m, [xb, yb_, zb], "CAR_under_bolt")   # 26 October 2026: closed quad cylinder
+    # 26 October 2026: SPLITTER BLADE ; the sheet's front underside is a blade under the nose : in the bottom view a crescent
+    # between a front edge (outline minus front_offset_m) and a rear edge traced as a dark line (z 2.07 at the centre, 2.01
+    # at |x| 0.76) ; in the side views a wedge whose underside rises toward the tip (0.165 to 0.20) under a top (0.195 to
+    # 0.222). One closed section (rear bottom, front bottom, front top, rear top) swept across x, capped at both ends.
+    # FR : lame sous le nez, croissant en plan et coin de côté, section fermée balayée en x.
+    SB = C.get("splitter_blade")
+    if SB and SB.get("on", 1):
+        fr = np.array(SB["front_xz"], float); rr = np.array(SB["rear_xz"], float); xm = SB["x_max"]
+        xs = np.linspace(-xm, xm, SB.get("n", 33))
+        zf = np.interp(np.abs(xs), fr[:, 0], fr[:, 1]) - SB.get("front_offset_m", 0.045); zr = np.interp(np.abs(xs), rr[:, 0], rr[:, 1])
+        (yrb, yrt), (yfb, yft) = SB["y_rear"], SB["y_front"]
+        ring = np.stack([np.stack([xs, np.full_like(xs, yrb), zr], 1), np.stack([xs, np.full_like(xs, yfb), zf], 1),
+                         np.stack([xs, np.full_like(xs, yft), zf], 1), np.stack([xs, np.full_like(xs, yrt), zr], 1)], 0)
+        m.grid(ring, SB.get("name", "CAR_splitter_blade_C"), close_u=True, flip=SB.get("flip", False))
+        for k_, fl_ in ((0, False), (-1, True)):   # end caps
+            q_ = ring[:, k_]; m.grid(np.array([[q_[0], q_[1]], [q_[3], q_[2]]]), SB.get("name", "CAR_splitter_blade_C"), flip=fl_ ^ SB.get("flip", False))
+    np.savez(out, P=np.array(m.P, np.float32), Q=np.array(m.Q, np.int32), names=np.array(m.N))
+    print(json.dumps({"points": len(m.P), "quads": len(m.Q), "parts": len(set(m.N))}))
+
+
+if __name__ == "__main__":
+    main(*sys.argv[1:])
